@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "home": "Home",
+    "channel": "Channels",
+    "features": "Features",
+    "download": "Download"
+  },
+  "hero": {
+    "tag": "New Release · Integrated with Claude Code & Hermes Agent",
+    "title": "OpenClaw",
+    "subtitle": "An AI assistant that truly works autonomously. It independently executes tasks, manages files, runs commands, and seamlessly integrates with your workflow. No technical background required, get started in 5 minutes.",
+    "download": "Download {platform} Version",
+    "support": "Supports Mac M-series, Intel series, Windows 10/11 (64-bit), Linux"
+  },
+  "terminal": {
+    "title": "OpenClaw Control Panel",
+    "tab": "Scenario {number}",
+    "userLabel": "You:",
+    "aiLabel": "OpenClaw:",
+    "timeLabel": "Time: {time}"
+  },
+  "demos": [
+    {
+      "user": "Help me monitor competitor prices, generate daily comparison reports and send to enterprise WeChat",
+      "think": "→ Fetching competitor platform data...",
+      "result": "→ Core category prices <span class=\"hl-red\">12% above average</span>, pricing recommendations generated, reports sent."
+    },
+    {
+      "user": "Analyze this week's sales data, identify abnormal fluctuations and provide reasons",
+      "think": "→ Reading sales system data...",
+      "result": "→ East region sales <span class=\"hl-teal\">down 23%</span> QoQ, mainly due to channel stockouts, detailed report attached."
+    },
+    {
+      "user": "Statistics of this week's outpatient data, analyze consultation volume and wait time by department",
+      "think": "→ Reading outpatient system data...",
+      "result": "→ This week <span class=\"hl-teal\">2,847 visits</span>, <span class=\"hl-red\">orthopedics average wait 52 minutes</span> exceeds standard, optimization recommendations attached."
+    },
+    {
+      "user": "Fetch today's A-share medical sector data, analyze abnormal stocks, generate morning report",
+      "think": "→ Fetching market data...",
+      "result": "→ Medical sector today <span class=\"hl-teal\">3 limit-up stocks</span>, <span class=\"hl-red\">2 strategic expansion signals</span>, competitive brief generated."
+    },
+    {
+      "user": "Calculate total change order amounts, determine if contract limit exceeded",
+      "think": "→ Aggregating change order data...",
+      "result": "→ Cumulative changes <span class=\"hl-red\">¥1.278 million</span>, 15% over contract limit, warning notification sent."
+    }
+  ],
+  "models": {
+    "title": "Supporting <span>{count}</span> Major Domestic and International Model Providers"
+  },
+  "channels": {
+    "title": "Supported <span>Message Channels</span>"
+  },
+  "features": {
+    "title": "Why Choose <span class=\"text-[#ff4d4d]\">OpenClaw</span>?",
+    "subtitle": "A true AI digital employee, not just a chatbot",
+    "items": [
+      {
+        "title": "Autonomous Task Execution",
+        "desc": "An AI assistant that truly works independently - analyzes, invokes tools, outputs results without constant supervision."
+      },
+      {
+        "title": "Privacy First, Local Data",
+        "desc": "All data stored locally, no cloud relay. Your files, conversations, and operation records are completely under your control."
+      },
+      {
+        "title": "Full Domestic Model Support",
+        "desc": "Compatible with domestic LLMs like Tongyi Qianwen, Wenxin Yiyan, Kimi, DeepSeek, as well as international models like OpenAI, Claude."
+      },
+      {
+        "title": "Full Platform Integration",
+        "desc": "Seamlessly connect with enterprise WeChat, Feishu, DingTalk and other office tools, bridging the last mile of your workflow."
+      },
+      {
+        "title": "Remote Monitoring",
+        "desc": "Monitor computer-side OpenClaw tasks remotely via mobile assistant, get real-time updates on all activities."
+      },
+      {
+        "title": "Agent Auto-Evolution",
+        "desc": "Integrated with Claude Code and Hermes Agent, supports automatic agent evolution, comprehensively upgrading intelligent capabilities."
+      }
+    ]
+  },
+  "cta": {
+    "title": "A truly autonomous AI assistant that makes complex <span class=\"text-[#F04D5A]\">work automated</span>",
+    "subtitle": "Deploy OpenClaw quickly and start your digital employee era.",
+    "download": "Download Now",
+    "free": "Free to use · No registration required · Open source & transparent"
+  },
+  "footer": {
+    "copyright": "&copy; 2026 Utechai. All rights reserved."
+  },
+  "toast": {
+    "preparing": "Preparing {platform} version download...",
+    "started": "{platform} version download started!"
+  }
+}

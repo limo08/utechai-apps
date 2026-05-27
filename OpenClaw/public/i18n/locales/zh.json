@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "home": "首页",
+    "channel": "消息渠道",
+    "features": "核心功能",
+    "download": "立即下载"
+  },
+  "hero": {
+    "tag": "新版本上线 · 集成 Claude Code 与 Hermes Agent",
+    "title": "OpenClaw 中文版",
+    "subtitle": "一个真正能自主干活的 AI 龙虾助手。它能独立执行任务、管理文件、调用命令，并无缝连接你的工作流。无需技术背景，5 分钟快速上手。",
+    "download": "一键下载 {platform} 版",
+    "support": "支持 Mac M 系列、Intel 系列，Windows 10 / 11 (64 位)，Linux"
+  },
+  "terminal": {
+    "title": "OpenClaw Control Panel",
+    "tab": "场景 {number}",
+    "userLabel": "你：",
+    "aiLabel": "OpenClaw：",
+    "timeLabel": "耗时 {time}"
+  },
+  "demos": [
+    {
+      "user": "帮我监控竞品价格，每天生成对比报告发到企业微信",
+      "think": "→ 正在抓取竞品平台数据...",
+      "result": "→ 对比 <span class=\"hl-red\">核心品类价格高于均价 12%</span>，调价建议已生成，报告已推送。"
+    },
+    {
+      "user": "分析本周销售数据，找出异常波动并给出原因",
+      "think": "→ 正在读取销售系统数据...",
+      "result": "→ 华东区销售额环比 <span class=\"hl-teal\">下降 23%</span>，主因是渠道断货，详细报告已附。"
+    },
+    {
+      "user": "统计本周门诊数据，分析各科室接诊量与等待时长",
+      "think": "→ 正在读取门诊系统数据...",
+      "result": "→ 本周接诊 <span class=\"hl-teal\">2,847 人次</span>，<span class=\"hl-red\">骨科候诊均值 52 分钟</span>超标，优化建议已附报告。"
+    },
+    {
+      "user": "抓取今日 A 股医疗板块数据，分析异动个股，生成早报",
+      "think": "→ 正在获取市场行情数据...",
+      "result": "→ 医疗板块今日 <span class=\"hl-teal\">3 只涨停</span>，<span class=\"hl-red\">2 项战略扩张信号</span>，竞争简报已生成。"
+    },
+    {
+      "user": "统计项目变更单金额，判断是否超出合同上限",
+      "think": "→ 正在汇总变更单数据...",
+      "result": "→ 累计变更金额 <span class=\"hl-red\">¥127.8 万</span>，超出合同上限 15%，预警通知已发送。"
+    }
+  ],
+  "models": {
+    "title": "支持<span>{count}</span>大国内外主流模型厂商"
+  },
+  "channels": {
+    "title": "支持的<span>消息渠道</span>"
+  },
+  "features": {
+    "title": "为什么选择 <span class=\"text-[#ff4d4d]\">OpenClaw</span>？",
+    "subtitle": "真正的 AI 数字员工，不只是一个聊天机器人",
+    "items": [
+      {
+        "title": "自主执行任务",
+        "desc": "真正能自主干活的 AI 助手，独立分析、调用工具、输出结果，无需你时刻盯着。"
+      },
+      {
+        "title": "隐私优先，数据本地",
+        "desc": "所有数据存储在本地，不经云端中转。你的文件、对话、操作记录完全由你掌控。"
+      },
+      {
+        "title": "国产模型全支持",
+        "desc": "兼容通义千问、文心一言、Kimi、DeepSeek 等国产大模型，也支持 OpenAI、Claude 等海外模型。"
+      },
+      {
+        "title": "全平台集成",
+        "desc": "无缝连接企业微信、飞书、钉钉等办公工具，打通工作流最后一公里。"
+      },
+      {
+        "title": "远程监控",
+        "desc": "通过手机助手，远程监控电脑端龙虾任务，第一手掌握龙虾一举一动。"
+      },
+      {
+        "title": "智能体自动进化",
+        "desc": "集成 Claude Code 与 Hermes Agent，支持智能体自动进化，智能化能力全面升级。"
+      }
+    ]
+  },
+  "cta": {
+    "title": "一个真正能自主干活的 AI 龙虾助手，让复杂<span class=\"text-[#F04D5A]\">工作自动化</span>",
+    "subtitle": "快速部署 OpenClaw，开启你的数字员工时代。",
+    "download": "立即下载",
+    "free": "免费使用 · 无需注册 · 开源透明"
+  },
+  "footer": {
+    "copyright": "&copy; 2026 Utechai. 保留所有权利。"
+  },
+  "toast": {
+    "preparing": "正在准备 {platform} 版下载...",
+    "started": "{platform} 版下载已开始!"
+  }
+}

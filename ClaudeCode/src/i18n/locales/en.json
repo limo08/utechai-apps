@@ -1,0 +1,125 @@
+{
+  "nav": {
+    "features": "Features",
+    "install": "Installation",
+    "ide": "IDE Integration",
+    "download": "Download for {platform}"
+  },
+  "hero": {
+    "tag": "Powered by Claude 4 Models",
+    "title1": "Terminal-native",
+    "title2": "AI Coding Assistant",
+    "subtitle": "Claude Code is Anthropic's intelligent coding tool that understands your codebase directly in the terminal, edits across files, runs tests, and manages Git workflows. One command, full takeover.",
+    "downloadBtn": "Download for {platform}",
+    "docBtn": "Read Docs"
+  },
+  "terminal": {
+    "titlebar": "claude — ~/projects/my-app"
+  },
+  "terminalLines": {
+    "prompt1": "$ claude",
+    "header1": "  ╭──────────────────────────────────────╮",
+    "header2": "  │  Claude Code · Agentic Coding Tool   │",
+    "header3": "  ╰──────────────────────────────────────╯",
+    "info1": "  ● Connected to Claude 4 Sonnet",
+    "info2": "  ● Context: 200K tokens",
+    "prompt2": "> Refactor all files in the src/utils directory",
+    "action1": "  Reading 12 files in src/utils/...",
+    "action2": "  Analyzing code patterns and dependencies...",
+    "success1": "  ✓ Refactored 12 files across 3 modules",
+    "success2": "  ✓ All 47 tests passing",
+    "action3": "  Creating git commit...",
+    "success3": "  ✓ Committed: \"refactor: modularize utils directory\""
+  },
+  "features": {
+    "title": "Why Choose Claude Code",
+    "subtitle": "Not just code completion — an intelligent coding partner that understands your entire project",
+    "items": [
+      {
+        "title": "Deep Code Awareness",
+        "desc": "Reads through the entire codebase, understands project architecture, module relationships, and business logic. 200K ultra-long context window handles large projects effortlessly."
+      },
+      {
+        "title": "Cross-file Editing",
+        "desc": "Modify multiple files at once, automatically maintaining code consistency. Intelligent editing that crosses file boundaries, from refactoring to new feature development."
+      },
+      {
+        "title": "Git Workflow",
+        "desc": "Auto-create commits, resolve merge conflicts, generate PRs. Making version control a natural extension of the development process."
+      },
+      {
+        "title": "Terminal Native",
+        "desc": "Run directly in the terminal, no need to switch IDE or chat windows. One claude command to start collaborating instantly."
+      },
+      {
+        "title": "IDE Integration",
+        "desc": "Seamlessly integrates with VS Code and JetBrains IDEs. Terminal and editor side by side for efficient dual-window development."
+      },
+      {
+        "title": "Autonomous Execution",
+        "desc": "Run tests, execute commands, create files — once authorized, Claude Code can autonomously complete entire development tasks."
+      }
+    ]
+  },
+  "install": {
+    "title": "Install in 3 Steps",
+    "subtitle": "Requires only Node.js 18+ environment, one command to install. Supports macOS, Linux, and Windows (WSL).",
+    "tabMacos": "macOS",
+    "tabLinux": "Linux",
+    "tabWindows": "Windows",
+    "step1Title": "Install Prerequisites",
+    "step2Title": "Install Claude Code",
+    "step3Title": "Verify & Launch",
+    "step1Filename": "Terminal — Install Node.js",
+    "step2Filename": "Terminal — Install Claude Code",
+    "step3Filename": "Terminal — Verify Installation",
+    "requirementsTitle": "System Requirements",
+    "reqNode": "Node.js 18+",
+    "reqNodeDesc": "LTS version recommended",
+    "reqNpm": "npm / pnpm",
+    "reqNpmDesc": "Bundled with Node.js",
+    "reqClaude": "Claude Pro / Max / API",
+    "reqClaudeDesc": "Any subscription plan works"
+  },
+  "installCodes": {
+    "macosPrereq": "# Install Node.js (Homebrew recommended)\nbrew install node@20",
+    "macosInstall": "# Install Claude Code globally\nnpm install -g @anthropic-ai/claude-code",
+    "macosVerify": "# Verify installation\nclaude --version\n\n# Launch Claude Code\nclaude",
+    "linuxPrereq": "# Install Node.js (Ubuntu/Debian)\ncurl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -\nsudo apt-get install -y nodejs",
+    "linuxInstall": "# Install Claude Code globally\nnpm install -g @anthropic-ai/claude-code",
+    "linuxVerify": "# Verify installation\nclaude --version\n\n# Launch Claude Code\nclaude",
+    "windowsPrereq": "# Install Node.js (WSL2 recommended)\n# Visit https://nodejs.org to download\n# Or in WSL2:\nsudo apt update && sudo apt install nodejs npm",
+    "windowsInstall": "# Install Claude Code globally\nnpm install -g @anthropic-ai/claude-code",
+    "windowsVerify": "# Verify installation\nclaude --version\n\n# Launch Claude Code\nclaude"
+  },
+  "ide": {
+    "title": "Your IDE, Claude's Battlefield",
+    "subtitle": "Run Claude Code in terminal, sync changes in editor — seamless dual-window collaboration",
+    "vscodeName": "VS Code",
+    "vscodeDesc": "Microsoft Lightweight Editor",
+    "vscodeText": "Run Claude Code in VS Code's integrated terminal, view file changes in real time, and track all modifications with the source control panel.",
+    "vscodeTags": ["Integrated Terminal", "Real-time Sync", "Git Panel", "Extension Ecosystem"],
+    "vscodeFilename": "VS Code Integrated Terminal",
+    "vscodeCode": "# Start in VS Code terminal\ncd your-project\ncode .\n# Run in integrated terminal\nclaude",
+    "jetbrainsName": "JetBrains",
+    "jetbrainsDesc": "IntelliJ / WebStorm / PyCharm etc.",
+    "jetbrainsText": "Run Claude Code in JetBrains' built-in terminal, leverage powerful project navigation and refactoring, and collaborate with AI agents.",
+    "jetbrainsTags": ["Built-in Terminal", "Smart Completion", "Project Navigation", "Multi-language"],
+    "jetbrainsFilename": "JetBrains Built-in Terminal",
+    "jetbrainsCode": "# Start in JetBrains terminal\n# Alt+F12 to open built-in terminal\ncd your-project\n# Run Claude Code\nclaude"
+  },
+  "cta": {
+    "title": "Ready to let AI take over your terminal?",
+    "subtitle": "One command to start a new paradigm of intelligent coding. Claude Code will become your most reliable coding partner.",
+    "downloadBtn": "Download for {platform}"
+  },
+  "footer": {
+    "copyright": "&copy; 2025 Anthropic. All rights reserved."
+  },
+  "copyBtn": "Copy",
+  "copyBtnDone": "Copied",
+  "toast": {
+    "preparing": "Preparing {platform} download...",
+    "started": "{platform} download started"
+  }
+}
