@@ -1,0 +1,136 @@
+{
+    "appName": "UTECHAI",
+    "loading": "Загрузка...",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "confirm": "Подтвердить",
+    "delete": "Удалить",
+    "edit": "Изменить",
+    "search": "Поиск",
+    "clear": "Очистить",
+    "close": "Закрыть",
+    "back": "Назад",
+    "next": "Далее",
+    "previous": "Предыдущий",
+    "submit": "Отправить",
+    "reset": "Сбросить",
+    "generate": "Генерировать",
+    "regenerate": "Регенерировать",
+    "preview": "Предпросмотр",
+    "download": "Скачать",
+    "upload": "Загрузить",
+    "select": "Выбрать",
+    "add": "Добавить",
+    "remove": "Удалить",
+    "refresh": "Обновить",
+    "expand": "Развернуть",
+    "collapse": "Свернуть",
+    "all": "Все",
+    "none": "Нет",
+    "success": "Успех",
+    "error": "Ошибка",
+    "warning": "Предупреждение",
+    "info": "Информация",
+    "copy": "Копировать",
+    "paste": "Вставить",
+    "apply": "Применить",
+    "autoSave": "Автосохранение",
+    "saved": "Сохранено",
+    "episode": "Episode",
+    "project": "Project",
+    "editEpisodeName": "Edit Episode Name",
+    "deleteEpisode": "Delete Episode",
+    "deleteEpisodeConfirm": "Confirm Delete",
+    "newEpisode": "New Episode",
+    "optional": "(Optional)",
+    "rename": "Rename",
+    "dragToReorder": "Drag to reorder",
+    "episodeNamePlaceholder": "Enter episode name...",
+    "cancelSelection": "Cancel selection",
+    "referenceImage": "Reference image",
+    "previewLarge": "Preview large",
+    "viewOriginal": "View original",
+    "schemeN": "Scheme {n}",
+    "insufficientBalance": "Insufficient Balance",
+    "insufficientBalanceDetail": "Insufficient account balance, please recharge to continue",
+    "operationFailed": "Operation failed",
+    "pleaseRetry": "Please retry",
+    "recommended": "Recommended",
+    "language": {
+        "select": "Выберите язык",
+        "zh": "Китайский",
+        "en": "Английский",
+        "ja": "Японский",
+        "ru": "Русский",
+        "fr": "Французский",
+        "switchConfirmTitle": "Сменить язык?",
+        "switchConfirmMessage": "Переключение на {targetLanguage} изменит не только текст интерфейса, но и сквозные шаблоны промптов, генерацию сценариев и язык вывода рабочих процессов. Продолжить?",
+        "switchConfirmAction": "Переключить"
+    },
+    "taskStatus": {
+        "intent": {
+            "generate": {
+                "running": {
+                    "image": "Generating",
+                    "video": "Generating",
+                    "audio": "Generating",
+                    "text": "Generating"
+                }
+            },
+            "regenerate": {
+                "running": {
+                    "image": "Regenerating",
+                    "video": "Regenerating",
+                    "audio": "Regenerating",
+                    "text": "Regenerating"
+                }
+            },
+            "modify": {
+                "running": {
+                    "image": "Modifying",
+                    "video": "Modifying",
+                    "audio": "Modifying",
+                    "text": "Modifying"
+                }
+            },
+            "analyze": {
+                "running": {
+                    "image": "Analyzing",
+                    "video": "Analyzing",
+                    "audio": "Analyzing",
+                    "text": "Analyzing"
+                }
+            },
+            "build": {
+                "running": {
+                    "image": "Building",
+                    "video": "Building",
+                    "audio": "Building",
+                    "text": "Building"
+                }
+            },
+            "convert": {
+                "running": {
+                    "image": "Converting",
+                    "video": "Converting",
+                    "audio": "Converting",
+                    "text": "Converting"
+                }
+            },
+            "process": {
+                "running": {
+                    "image": "Processing",
+                    "video": "Processing",
+                    "audio": "Processing",
+                    "text": "Processing"
+                }
+            }
+        },
+        "failed": {
+            "image": "Failed",
+            "video": "Failed",
+            "audio": "Failed",
+            "text": "Failed"
+        }
+    }
+}

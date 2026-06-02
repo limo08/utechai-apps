@@ -1,0 +1,44 @@
+{
+  "title": "UTECHAI",
+  "subtitle": "AI映像Studio",
+  "heroTagline": "小説から完成映像まで、AI全工程駆動",
+  "heroDescription": "脚本制作、キャラクターデザイン、絵コンテ生成から映像合成まで、UTECHAI は AI ですべての創作工程を駆動し、プロ級映像制作を誰でも手軽に。",
+  "getStarted": "創作を始める",
+  "watchDemo": "デモを見る",
+  "features": {
+    "sectionTitle": "全工程 AI 創作",
+    "sectionSubtitle": "文字から画面まで、一クリックで",
+    "scriptToStoryboard": {
+      "title": "脚本 → 絵コンテ",
+      "description": "ストーリーテキストを入力し、AI が自動で物語構造を解析し、プロ級絵コンテ脚本と画面構図を生成"
+    },
+    "characterDesign": {
+      "title": "キャラクター工房",
+      "description": "スタイル統一のアニメキャラクターを制作、シーン間で外観の一貫性を維持"
+    },
+    "worldBuilding": {
+      "title": "シーン生成",
+      "description": "没入型環境生成、街路から星空まで、壮大なストーリー背景を構築"
+    },
+    "voiceSynthesis": {
+      "title": "AI 音声合成",
+      "description": "キャラクターに独自の声を与え、自然な音声合成で性格にマッチ"
+    },
+    "videoComposition": {
+      "title": "映像合成",
+      "description": "絵コンテ画面を自動で映像に編成、スマートな場面転換とテンポ制御"
+    },
+    "lipsync": {
+      "title": "リップシンク",
+      "description": "キャラクターの口の動きと音声を精密に同期、アニメ人物が本当に「話す」"
+    }
+  },
+  "cta": {
+    "title": "AI映像創作を始める準備はできましたか？",
+    "description": "無料登録で、小説から完成映像までの全創作工程を体験",
+    "button": "無料登録"
+  },
+  "footer": {
+    "copyright": "2026 UTECHAI AI. All rights reserved."
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "nav": {
+    "features": "功能特性",
+    "install": "安装指南",
+    "ide": "IDE 集成",
+    "download": "立即下载"
+  },
+  "hero": {
+    "tag": "基于 Claude 4 系列模型",
+    "title1": "终端原生的",
+    "title2": "AI 编程助手",
+    "subtitle": "Claude Code 是 Anthropic 推出的智能编程工具，直接在终端中理解你的代码库、跨文件编辑、运行测试、管理 Git 工作流。一个命令，全面接管。",
+    "downloadBtn": "免费下载安装",
+    "docBtn": "阅读文档"
+  },
+  "terminal": {
+    "titlebar": "claude — ~/projects/my-app"
+  },
+  "terminalLines": {
+    "prompt1": "$ claude",
+    "header1": "  ╭──────────────────────────────────────╮",
+    "header2": "  │  Claude Code · Agentic Coding Tool   │",
+    "header3": "  ╰──────────────────────────────────────╯",
+    "info1": "  ● Connected to Claude 4 Sonnet",
+    "info2": "  ● Context: 200K tokens",
+    "prompt2": "> 帮我重构 src/utils 目录下的所有文件",
+    "action1": "  Reading 12 files in src/utils/...",
+    "action2": "  Analyzing code patterns and dependencies...",
+    "success1": "  ✓ Refactored 12 files across 3 modules",
+    "success2": "  ✓ All 47 tests passing",
+    "action3": "  Creating git commit...",
+    "success3": "  ✓ Committed: \"refactor: modularize utils directory\""
+  },
+  "features": {
+    "title": "为什么选择 Claude Code",
+    "subtitle": "不只是代码补全，而是一个能理解整个项目的智能编程伙伴",
+    "items": [
+      {
+        "title": "深度代码感知",
+        "desc": "通读整个代码库，理解项目架构、模块关系和业务逻辑。200K 超长上下文窗口，轻松驾驭大型项目。"
+      },
+      {
+        "title": "跨文件编辑",
+        "desc": "一次性修改多个文件，自动保持代码一致性。从重构到新功能开发，跨越文件边界的智能编辑。"
+      },
+      {
+        "title": "Git 工作流",
+        "desc": "自动创建提交、解决合并冲突、生成 PR。让版本控制成为开发流程的自然延伸。"
+      },
+      {
+        "title": "终端原生",
+        "desc": "直接在终端中运行，无需切换 IDE 或聊天窗口。一个 claude 命令，即刻开始协作。"
+      },
+      {
+        "title": "IDE 集成",
+        "desc": "无缝接入 VS Code 和 JetBrains 系列 IDE。终端与编辑器并行，双窗口高效开发。"
+      },
+      {
+        "title": "自动执行",
+        "desc": "运行测试、执行命令、创建文件——获得授权后，Claude Code 可以自主完成整个开发任务。"
+      }
+    ]
+  },
+  "install": {
+    "title": "三步完成源码安装",
+    "subtitle": "只需 Node.js 18+ 环境，一条命令即可安装。支持 macOS、Linux 和 Windows (WSL)。",
+    "tabMacos": "macOS",
+    "tabLinux": "Linux",
+    "tabWindows": "Windows",
+    "step1Title": "安装前置依赖",
+    "step2Title": "安装 Claude Code",
+    "step3Title": "验证并启动",
+    "step1Filename": "终端 — 安装 Node.js",
+    "step2Filename": "终端 — 安装 Claude Code",
+    "step3Filename": "终端 — 验证安装",
+    "requirementsTitle": "系统要求",
+    "reqNode": "Node.js 18+",
+    "reqNodeDesc": "推荐 LTS 版本",
+    "reqNpm": "npm / pnpm",
+    "reqNpmDesc": "Node.js 自带包管理器",
+    "reqClaude": "Claude Pro / Max / API",
+    "reqClaudeDesc": "任一订阅计划即可使用"
+  },
+  "installCodes": {
+    "macosPrereq": "# 安装 Node.js (推荐使用 Homebrew)\nbrew install node@20",
+    "macosInstall": "# 全局安装 Claude Code\nnpm install -g @anthropic-ai/claude-code",
+    "macosVerify": "# 验证安装\nclaude --version\n\n# 启动 Claude Code\nclaude",
+    "linuxPrereq": "# 安装 Node.js (Ubuntu/Debian)\ncurl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -\nsudo apt-get install -y nodejs",
+    "linuxInstall": "# 全局安装 Claude Code\nnpm install -g @anthropic-ai/claude-code",
+    "linuxVerify": "# 验证安装\nclaude --version\n\n# 启动 Claude Code\nclaude",
+    "windowsPrereq": "# 安装 Node.js (推荐使用 WSL2)\n# 访问 https://nodejs.org 下载安装包\n# 或在 WSL2 中:\nsudo apt update && sudo apt install nodejs npm",
+    "windowsInstall": "# 全局安装 Claude Code\nnpm install -g @anthropic-ai/claude-code",
+    "windowsVerify": "# 验证安装\nclaude --version\n\n# 启动 Claude Code\nclaude"
+  },
+  "ide": {
+    "title": "你的 IDE，Claude 的战场",
+    "subtitle": "终端运行 Claude Code，编辑器同步查看变更，双窗口无缝协作",
+    "vscodeName": "VS Code",
+    "vscodeDesc": "微软轻量编辑器",
+    "vscodeText": "在 VS Code 的集成终端中运行Claude Code，实时查看文件变更，配合源代码管理面板追踪所有修改。",
+    "vscodeTags": ["集成终端", "文件实时同步", "Git 面板联动", "扩展生态"],
+    "vscodeFilename": "VS Code 集成终端",
+    "vscodeCode": "# 在 VS Code 终端中启动\ncd your-project\ncode .\n# 在集成终端中运行\nclaude",
+    "jetbrainsName": "JetBrains",
+    "jetbrainsDesc": "IntelliJ / WebStorm / PyCharm 等",
+    "jetbrainsText": "在 JetBrains IDE 的内置终端中运行Claude Code，利用强大的项目导航和重构功能，与 AI 智能体协同工作。",
+    "jetbrainsTags": ["内置终端", "智能补全互补", "项目导航", "多语言支持"],
+    "jetbrainsFilename": "JetBrains 内置终端",
+    "jetbrainsCode": "# 在 JetBrains 终端中启动\n# Alt+F12 打开内置终端\ncd your-project\n# 运行 Claude Code\nclaude"
+  },
+  "cta": {
+    "title": "准备好让 AI 接管你的终端了吗？",
+    "subtitle": "一行命令，开启智能编程新范式。Claude Code 将成为你最可靠的编程伙伴。",
+    "downloadBtn": "立即安装 Claude Code"
+  },
+  "footer": {
+    "copyright": "&copy; 2025 Anthropic. All rights reserved."
+  },
+  "copyBtn": "复制",
+  "copyBtnDone": "已复制"
+}

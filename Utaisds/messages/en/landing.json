@@ -1,0 +1,44 @@
+{
+  "title": "UTECHAI",
+  "subtitle": "AI Film & TV Studio",
+  "heroTagline": "From novel to final cut, powered by AI",
+  "heroDescription": "From script writing, character design, storyboard generation to video composition — UTECHAI drives every creative step with AI, making professional film production accessible.",
+  "getStarted": "Start Creating",
+  "watchDemo": "Watch Demo",
+  "features": {
+    "sectionTitle": "Full-Process AI Creation",
+    "sectionSubtitle": "From text to visuals, one click away",
+    "scriptToStoryboard": {
+      "title": "Script → Storyboard",
+      "description": "Input story text and AI automatically parses plot structure, generating professional storyboard scripts and frame compositions"
+    },
+    "characterDesign": {
+      "title": "Character Workshop",
+      "description": "Create style-consistent anime characters that maintain visual coherence across scenes"
+    },
+    "worldBuilding": {
+      "title": "Scene Generation",
+      "description": "Immersive environment generation, from streets to starfields, build grand story backgrounds"
+    },
+    "voiceSynthesis": {
+      "title": "AI Voice Acting",
+      "description": "Give characters unique voices with natural speech synthesis matching their personality"
+    },
+    "videoComposition": {
+      "title": "Video Composition",
+      "description": "Storyboard frames auto-assembled into complete videos with smart transitions and pacing"
+    },
+    "lipsync": {
+      "title": "Lip Sync",
+      "description": "Character mouth movements precisely matched to voice, making animated characters truly speak"
+    }
+  },
+  "cta": {
+    "title": "Ready to start your AI film creation?",
+    "description": "Sign up for free to experience the complete creation pipeline from novel to final cut",
+    "button": "Sign Up Free"
+  },
+  "footer": {
+    "copyright": "2026 UTECHAI AI. All rights reserved."
+  }
+}

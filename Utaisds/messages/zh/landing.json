@@ -1,0 +1,44 @@
+{
+  "title": "UTECHAI",
+  "subtitle": "AI影视Studio",
+  "heroTagline": "小说到成片，AI全流程驱动",
+  "heroDescription": "从剧本创作、角色设计、分镜生成到视频合成，UTECHAI 用 AI 驱动每一个创作环节，让专业级影视制作触手可及。",
+  "getStarted": "开始创作",
+  "watchDemo": "观看演示",
+  "features": {
+    "sectionTitle": "全流程 AI 创作",
+    "sectionSubtitle": "从文字到画面，一键完成",
+    "scriptToStoryboard": {
+      "title": "剧本 → 分镜",
+      "description": "输入故事文本，AI 自动解析情节结构，生成专业分镜脚本与画面构图"
+    },
+    "characterDesign": {
+      "title": "角色工坊",
+      "description": "打造风格统一的动漫角色，跨场景保持外观一致性"
+    },
+    "worldBuilding": {
+      "title": "场景生成",
+      "description": "沉浸式环境生成，从街道到星空，构建宏大的故事背景"
+    },
+    "voiceSynthesis": {
+      "title": "AI 配音",
+      "description": "为角色赋予独特声音，自然语音合成匹配角色性格"
+    },
+    "videoComposition": {
+      "title": "视频合成",
+      "description": "分镜画面自动编排成完整视频，智能转场与节奏控制"
+    },
+    "lipsync": {
+      "title": "口型同步",
+      "description": "角色口型与语音精准匹配，让动画人物真正「开口说话」"
+    }
+  },
+  "cta": {
+    "title": "准备好开启 AI 影视创作了吗？",
+    "description": "注册即可免费体验，从小说到成片的完整创作流程",
+    "button": "免费注册"
+  },
+  "footer": {
+    "copyright": "2026 UTECHAI AI. All rights reserved."
+  }
+}

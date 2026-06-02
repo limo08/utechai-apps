@@ -1,0 +1,44 @@
+{
+  "title": "UTECHAI",
+  "subtitle": "AI Cinéma & TV Studio",
+  "heroTagline": "Du roman au montage final, propulsé par l'IA",
+  "heroDescription": "De l'écriture du script, la conception de personnages, la génération de storyboards jusqu'à la composition vidéo — UTECHAI pilote chaque étape créative avec l'IA, rendant la production cinématographique professionnelle accessible à tous.",
+  "getStarted": "Commencer à créer",
+  "watchDemo": "Voir la démo",
+  "features": {
+    "sectionTitle": "Création IA complète",
+    "sectionSubtitle": "Du texte à l'image, en un clic",
+    "scriptToStoryboard": {
+      "title": "Script → Storyboard",
+      "description": "Entrez le texte de l'histoire et l'IA analyse automatiquement la structure narrative, générant des scripts storyboard professionnels et des compositions de cadrage"
+    },
+    "characterDesign": {
+      "title": "Atelier Personnages",
+      "description": "Créez des personnages anime avec un style cohérent, maintenant la cohérence visuelle entre les scènes"
+    },
+    "worldBuilding": {
+      "title": "Génération de Scènes",
+      "description": "Génération d'environnements immersifs, des rues aux champs stellaires, construisez de grands décors narratifs"
+    },
+    "voiceSynthesis": {
+      "title": "Voix IA",
+      "description": "Donnez aux personnages des voix uniques avec une synthèse vocale naturelle correspondant à leur personnalité"
+    },
+    "videoComposition": {
+      "title": "Composition Vidéo",
+      "description": "Les plans storyboard sont automatiquement assemblés en vidéos complètes avec des transitions intelligentes et un rythme contrôlé"
+    },
+    "lipsync": {
+      "title": "Lip Sync",
+      "description": "Les mouvements de bouche des personnages sont précisément synchronisés avec la voix, faisant vraiment « parler » les personnages animés"
+    }
+  },
+  "cta": {
+    "title": "Prêt à commencer votre création cinématographique IA ?",
+    "description": "Inscrivez-vous gratuitement pour expérimenter le pipeline complet de création, du roman au montage final",
+    "button": "Inscription gratuite"
+  },
+  "footer": {
+    "copyright": "2026 UTECHAI AI. All rights reserved."
+  }
+}

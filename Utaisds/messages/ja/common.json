@@ -1,0 +1,136 @@
+{
+    "appName": "UTECHAI",
+    "loading": "読み込み中...",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "delete": "削除",
+    "edit": "編集",
+    "search": "検索",
+    "clear": "クリア",
+    "close": "閉じる",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "submit": "送信",
+    "reset": "リセット",
+    "generate": "生成",
+    "regenerate": "再生成",
+    "preview": "プレビュー",
+    "download": "ダウンロード",
+    "upload": "アップロード",
+    "select": "選択",
+    "add": "追加",
+    "remove": "削除",
+    "refresh": "更新",
+    "expand": "展開",
+    "collapse": "折りたたむ",
+    "all": "すべて",
+    "none": "なし",
+    "success": "成功",
+    "error": "エラー",
+    "warning": "警告",
+    "info": "情報",
+    "copy": "コピー",
+    "paste": "貼り付け",
+    "apply": "適用",
+    "autoSave": "自動保存",
+    "saved": "保存済み",
+    "episode": "Episode",
+    "project": "Project",
+    "editEpisodeName": "Edit Episode Name",
+    "deleteEpisode": "Delete Episode",
+    "deleteEpisodeConfirm": "Confirm Delete",
+    "newEpisode": "New Episode",
+    "optional": "(Optional)",
+    "rename": "Rename",
+    "dragToReorder": "Drag to reorder",
+    "episodeNamePlaceholder": "Enter episode name...",
+    "cancelSelection": "Cancel selection",
+    "referenceImage": "Reference image",
+    "previewLarge": "Preview large",
+    "viewOriginal": "View original",
+    "schemeN": "Scheme {n}",
+    "insufficientBalance": "Insufficient Balance",
+    "insufficientBalanceDetail": "Insufficient account balance, please recharge to continue",
+    "operationFailed": "Operation failed",
+    "pleaseRetry": "Please retry",
+    "recommended": "Recommended",
+    "language": {
+        "select": "言語を選択",
+        "zh": "中国語",
+        "en": "英語",
+        "ja": "日本語",
+        "ru": "ロシア語",
+        "fr": "フランス語",
+        "switchConfirmTitle": "言語を切り替えますか？",
+        "switchConfirmMessage": "{targetLanguage} に切り替えると、インターフェースのテキストだけでなく、プロンプトテンプレート、脚本生成、ワークフロー出力言語も変更されます。続行しますか？",
+        "switchConfirmAction": "今すぐ切り替え"
+    },
+    "taskStatus": {
+        "intent": {
+            "generate": {
+                "running": {
+                    "image": "Generating",
+                    "video": "Generating",
+                    "audio": "Generating",
+                    "text": "Generating"
+                }
+            },
+            "regenerate": {
+                "running": {
+                    "image": "Regenerating",
+                    "video": "Regenerating",
+                    "audio": "Regenerating",
+                    "text": "Regenerating"
+                }
+            },
+            "modify": {
+                "running": {
+                    "image": "Modifying",
+                    "video": "Modifying",
+                    "audio": "Modifying",
+                    "text": "Modifying"
+                }
+            },
+            "analyze": {
+                "running": {
+                    "image": "Analyzing",
+                    "video": "Analyzing",
+                    "audio": "Analyzing",
+                    "text": "Analyzing"
+                }
+            },
+            "build": {
+                "running": {
+                    "image": "Building",
+                    "video": "Building",
+                    "audio": "Building",
+                    "text": "Building"
+                }
+            },
+            "convert": {
+                "running": {
+                    "image": "Converting",
+                    "video": "Converting",
+                    "audio": "Converting",
+                    "text": "Converting"
+                }
+            },
+            "process": {
+                "running": {
+                    "image": "Processing",
+                    "video": "Processing",
+                    "audio": "Processing",
+                    "text": "Processing"
+                }
+            }
+        },
+        "failed": {
+            "image": "Failed",
+            "video": "Failed",
+            "audio": "Failed",
+            "text": "Failed"
+        }
+    }
+}

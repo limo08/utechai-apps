@@ -1,0 +1,136 @@
+{
+    "appName": "UTECHAI",
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "search": "Rechercher",
+    "clear": "Effacer",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Envoyer",
+    "reset": "Réinitialiser",
+    "generate": "Générer",
+    "regenerate": "Regénérer",
+    "preview": "Aperçu",
+    "download": "Télécharger",
+    "upload": "Importer",
+    "select": "Sélectionner",
+    "add": "Ajouter",
+    "remove": "Retirer",
+    "refresh": "Actualiser",
+    "expand": "Développer",
+    "collapse": "Réduire",
+    "all": "Tout",
+    "none": "Aucun",
+    "success": "Succès",
+    "error": "Erreur",
+    "warning": "Attention",
+    "info": "Info",
+    "copy": "Copier",
+    "paste": "Coller",
+    "apply": "Appliquer",
+    "autoSave": "Sauvegarde auto",
+    "saved": "Enregistré",
+    "episode": "Episode",
+    "project": "Project",
+    "editEpisodeName": "Edit Episode Name",
+    "deleteEpisode": "Delete Episode",
+    "deleteEpisodeConfirm": "Confirm Delete",
+    "newEpisode": "New Episode",
+    "optional": "(Optional)",
+    "rename": "Rename",
+    "dragToReorder": "Drag to reorder",
+    "episodeNamePlaceholder": "Enter episode name...",
+    "cancelSelection": "Cancel selection",
+    "referenceImage": "Reference image",
+    "previewLarge": "Preview large",
+    "viewOriginal": "View original",
+    "schemeN": "Scheme {n}",
+    "insufficientBalance": "Insufficient Balance",
+    "insufficientBalanceDetail": "Insufficient account balance, please recharge to continue",
+    "operationFailed": "Operation failed",
+    "pleaseRetry": "Please retry",
+    "recommended": "Recommended",
+    "language": {
+        "select": "Choisir la langue",
+        "zh": "Chinois",
+        "en": "Anglais",
+        "ja": "Japonais",
+        "ru": "Russe",
+        "fr": "Français",
+        "switchConfirmTitle": "Changer de langue ?",
+        "switchConfirmMessage": "Passer à {targetLanguage} modifiera non seulement le texte de l'interface, mais aussi les templates de prompts, la génération de scripts et la langue des sorties de workflow. Continuer ?",
+        "switchConfirmAction": "Changer maintenant"
+    },
+    "taskStatus": {
+        "intent": {
+            "generate": {
+                "running": {
+                    "image": "Generating",
+                    "video": "Generating",
+                    "audio": "Generating",
+                    "text": "Generating"
+                }
+            },
+            "regenerate": {
+                "running": {
+                    "image": "Regenerating",
+                    "video": "Regenerating",
+                    "audio": "Regenerating",
+                    "text": "Regenerating"
+                }
+            },
+            "modify": {
+                "running": {
+                    "image": "Modifying",
+                    "video": "Modifying",
+                    "audio": "Modifying",
+                    "text": "Modifying"
+                }
+            },
+            "analyze": {
+                "running": {
+                    "image": "Analyzing",
+                    "video": "Analyzing",
+                    "audio": "Analyzing",
+                    "text": "Analyzing"
+                }
+            },
+            "build": {
+                "running": {
+                    "image": "Building",
+                    "video": "Building",
+                    "audio": "Building",
+                    "text": "Building"
+                }
+            },
+            "convert": {
+                "running": {
+                    "image": "Converting",
+                    "video": "Converting",
+                    "audio": "Converting",
+                    "text": "Converting"
+                }
+            },
+            "process": {
+                "running": {
+                    "image": "Processing",
+                    "video": "Processing",
+                    "audio": "Processing",
+                    "text": "Processing"
+                }
+            }
+        },
+        "failed": {
+            "image": "Failed",
+            "video": "Failed",
+            "audio": "Failed",
+            "text": "Failed"
+        }
+    }
+}
