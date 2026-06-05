@@ -3,7 +3,7 @@ import { composeModelKey } from '@/lib/model-config-contract'
 import { getProviderKey } from '@/lib/api-config'
 import type { OpenAICompatMediaTemplate } from '@/lib/openai-compat-media-template'
 
-type StoredModelType = 'llm' | 'image' | 'video' | 'audio' | 'lipsync'
+type StoredModelType = 'text' | 'image' | 'video' | 'tts' | 'lipsync' | 'voice_design'
 
 type StoredModelRecord = Record<string, unknown> & {
   modelId: string
@@ -32,7 +32,7 @@ function readTrimmedString(value: unknown): string {
 }
 
 function isStoredModelType(value: string): value is StoredModelType {
-  return value === 'llm' || value === 'image' || value === 'video' || value === 'audio' || value === 'lipsync'
+  return value === 'text' || value === 'image' || value === 'video' || value === 'tts' || value === 'lipsync' || value === 'voice_design'
 }
 
 function parseStoredModels(raw: string | null | undefined): StoredModelRecord[] {

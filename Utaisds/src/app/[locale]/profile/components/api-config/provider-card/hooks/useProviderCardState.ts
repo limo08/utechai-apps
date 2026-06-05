@@ -107,7 +107,7 @@ export function shouldProbeModelLlmProtocol(params: {
   providerId: string
   modelType: ProviderCardModelType
 }): boolean {
-  return getProviderKey(params.providerId) === 'openai-compatible' && params.modelType === 'llm'
+  return getProviderKey(params.providerId) === 'openai-compatible' && params.modelType === 'text'
 }
 
 export function shouldReprobeModelLlmProtocol(params: {
@@ -115,8 +115,8 @@ export function shouldReprobeModelLlmProtocol(params: {
   originalModel: CustomModel
   nextModelId: string
 }): boolean {
-  if (!shouldProbeModelLlmProtocol({ providerId: params.providerId, modelType: 'llm' })) return false
-  if (params.originalModel.type !== 'llm') return false
+  if (!shouldProbeModelLlmProtocol({ providerId: params.providerId, modelType: 'text' })) return false
+  if (params.originalModel.type !== 'text') return false
   if (getProviderKey(params.originalModel.provider) !== 'openai-compatible') return false
   return params.originalModel.modelId !== params.nextModelId || params.originalModel.provider !== params.providerId
 }
@@ -160,7 +160,7 @@ function pickConfiguredLlmModel(params: {
   models: CustomModel[]
   defaultAnalysisModel?: string
 }): string | undefined {
-  const enabledLlmModels = params.models.filter((model) => model.type === 'llm' && model.enabled)
+  const enabledLlmModels = params.models.filter((model) => model.type === 'text' && model.enabled)
   if (enabledLlmModels.length === 0) return undefined
   const preferredModel = enabledLlmModels.find((model) => model.modelKey === params.defaultAnalysisModel)
   return (preferredModel ?? enabledLlmModels[0])?.modelId
@@ -203,7 +203,7 @@ export function buildCustomPricingFromModelForm(
     return { ok: true }
   }
 
-  if (modelType === 'llm') {
+  if (modelType === 'text') {
     const inputVal = parseFloat(form.priceInput || '')
     const outputVal = parseFloat(form.priceOutput || '')
     if (!Number.isFinite(inputVal) || inputVal < 0 || !Number.isFinite(outputVal) || outputVal < 0) {
@@ -282,8 +282,8 @@ export function buildCustomPricingFromModelForm(
 }
 
 function toProviderCardModelType(type: CustomModel['type']): ProviderCardModelType | null {
-  if (type === 'llm' || type === 'image' || type === 'video' || type === 'audio') return type
-  if (type === 'lipsync') return 'audio'
+  if (type === 'text' || type === 'image' || type === 'video' || type === 'tts') return type
+  if (type === 'lipsync') return 'tts'
   return null
 }
 
@@ -405,7 +405,7 @@ export function useProviderCardState({
     PRESET_MODELS.some((model) => encodeModelKey(model.provider, model.modelId) === modelKey)
 
   const isDefaultModel = (model: CustomModel) => {
-    if (model.type === 'llm' && matchesModelKey(defaultModels.analysisModel, model.provider, model.modelId)) {
+    if (model.type === 'text' && matchesModelKey(defaultModels.analysisModel, model.provider, model.modelId)) {
       return true
     }
 
@@ -420,7 +420,7 @@ export function useProviderCardState({
       return true
     }
 
-    if (model.type === 'audio' && matchesModelKey(defaultModels.audioModel, model.provider, model.modelId)) {
+    if (model.type === 'tts' && matchesModelKey(defaultModels.audioModel, model.provider, model.modelId)) {
       return true
     }
 

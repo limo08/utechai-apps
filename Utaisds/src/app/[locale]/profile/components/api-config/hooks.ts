@@ -51,8 +51,8 @@ export interface AvailableModelData {
     modelId: string
     name: string
     ownedBy?: string | null
-    modelType: 'llm' | 'image' | 'video' | 'audio' | 'lipsync' | 'voice_design' | 'other'
-    unifiedType: 'llm' | 'image' | 'video' | 'audio' | 'lipsync'
+    modelType: 'text' | 'image' | 'video' | 'tts' | 'lipsync' | 'voice_design' | 'other'
+    unifiedType: 'text' | 'image' | 'video' | 'tts' | 'lipsync'
     tags: string[]
     provider: string
 }
@@ -67,6 +67,7 @@ interface UseProvidersReturn {
     loading: boolean
     saveStatus: 'idle' | 'saving' | 'saved' | 'error'
     flushConfig: () => Promise<void>
+    refreshAvailableModels: () => Promise<void>
     updateProviderHidden: (providerId: string, hidden: boolean) => void
     updateProviderApiKey: (providerId: string, apiKey: string) => void
     updateProviderBaseUrl: (providerId: string, baseUrl: string) => void
@@ -448,6 +449,22 @@ export function useProviders(): UseProvidersReturn {
         }
     }, [performSave])
 
+    // 刷新可用模型列表（同步网关模型后调用）
+    const refreshAvailableModels = useCallback(async () => {
+        try {
+            const res = await apiFetch('/api/user/api-config')
+            if (!res.ok) {
+                throw new Error(`api-config load failed: HTTP ${res.status}`)
+            }
+            const data = await res.json()
+            if (Array.isArray(data.availableModels)) {
+                setAvailableModels(data.availableModels as AvailableModelData[])
+            }
+        } catch (error) {
+            _ulogError('刷新可用模型失败:', error)
+        }
+    }, [])
+
     // 默认模型操作：选中即立刻显示已保存（与项目设置一致）
     // capabilityFieldsToDefault：切换模型时自动将第一个 option 写入 capabilityDefaults（只填未配置字段）
     const updateDefaultModel = useCallback((
@@ -796,6 +813,7 @@ export function useProviders(): UseProvidersReturn {
         loading,
         saveStatus,
         flushConfig,
+        refreshAvailableModels,
         updateProviderHidden,
         updateProviderApiKey,
         updateProviderBaseUrl,

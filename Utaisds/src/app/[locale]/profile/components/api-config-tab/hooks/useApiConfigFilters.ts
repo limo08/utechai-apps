@@ -18,7 +18,7 @@ const DYNAMIC_PROVIDER_PREFIXES = ['gemini-compatible', 'openai-compatible']
 const ALWAYS_SHOW_PROVIDERS: string[] = []
 /** 完全不在 UI 中展示的 provider（既不在主列表，也不在折叠区） */
 const HIDDEN_PROVIDER_KEYS = new Set(['siliconflow'])
-const PROVIDER_MODEL_TYPES: Array<'llm' | 'image' | 'video' | 'audio' | 'lipsync'> = ['llm', 'image', 'video', 'audio', 'lipsync']
+const PROVIDER_MODEL_TYPES: Array<'text' | 'image' | 'video' | 'tts' | 'lipsync'> = ['text', 'image', 'video', 'tts', 'lipsync']
 const DEFAULT_AUDIO_EXCLUDED_MODEL_IDS = new Set([
   'qwen-voice-design',
 ])
@@ -34,16 +34,16 @@ const MODEL_PROVIDER_KEYS = [
   'openai-compatible',
 ]
 
-function isProviderModelType(type: CustomModel['type']): type is 'llm' | 'image' | 'video' | 'audio' | 'lipsync' {
-  return PROVIDER_MODEL_TYPES.includes(type as 'llm' | 'image' | 'video' | 'audio' | 'lipsync')
+function isProviderModelType(type: CustomModel['type']): type is 'text' | 'image' | 'video' | 'tts' | 'lipsync' {
+  return PROVIDER_MODEL_TYPES.includes(type as 'text' | 'image' | 'video' | 'tts' | 'lipsync')
 }
 
-function isDefaultModelType(type: CustomModel['type']): type is 'llm' | 'image' | 'video' | 'audio' | 'lipsync' {
-  return type === 'llm' || type === 'image' || type === 'video' || type === 'audio' || type === 'lipsync'
+function isDefaultModelType(type: CustomModel['type']): type is 'text' | 'image' | 'video' | 'tts' | 'lipsync' {
+  return type === 'text' || type === 'image' || type === 'video' || type === 'tts' || type === 'lipsync'
 }
 
 function isAudioDefaultCandidate(model: CustomModel): boolean {
-  if (model.type !== 'audio') return true
+  if (model.type !== 'tts') return true
   return !DEFAULT_AUDIO_EXCLUDED_MODEL_IDS.has(model.modelId)
 }
 
@@ -92,11 +92,11 @@ export function useApiConfigFilters({
   }, [modelProviderKeys, providers])
 
   const enabledModelsByType = useMemo(() => {
-    const grouped: Record<'llm' | 'image' | 'video' | 'audio' | 'lipsync' | 'voicedesign', EnabledModelOption[]> = {
-      llm: [],
+    const grouped: Record<'text' | 'image' | 'video' | 'tts' | 'lipsync' | 'voicedesign', EnabledModelOption[]> = {
+      text: [],
       image: [],
       video: [],
-      audio: [],
+      tts: [],
       lipsync: [],
       voicedesign: [],
     }
@@ -115,7 +115,7 @@ export function useApiConfigFilters({
       }
 
       // Voice design models (audio type but excluded from TTS)
-      if (model.type === 'audio' && DEFAULT_AUDIO_EXCLUDED_MODEL_IDS.has(model.modelId)) {
+      if (model.type === 'tts' && DEFAULT_AUDIO_EXCLUDED_MODEL_IDS.has(model.modelId)) {
         grouped.voicedesign.push(option)
         continue
       }
@@ -129,10 +129,10 @@ export function useApiConfigFilters({
     // 合并网关持久化的可用模型（从 AvailableModel 表读取），不需要检查 provider API Key
     if (availableModels && availableModels.length > 0) {
       const DISPLAY_TYPE_TO_GROUP: Record<string, keyof typeof grouped> = {
-        llm: 'llm',
+        text: 'text',
         image: 'image',
         video: 'video',
-        audio: 'audio',
+        tts: 'tts',
         lipsync: 'lipsync',
         voice_design: 'voicedesign',
         // 'other' 不加入任何分组
@@ -166,6 +166,6 @@ export function useApiConfigFilters({
     modelProviders,
     getModelsForProvider: (providerId: string) =>
       models.filter((model) => model.provider === providerId),
-    getEnabledModelsByType: (type: 'llm' | 'image' | 'video' | 'audio' | 'lipsync' | 'voicedesign') => enabledModelsByType[type],
+    getEnabledModelsByType: (type: 'text' | 'image' | 'video' | 'tts' | 'lipsync' | 'voicedesign') => enabledModelsByType[type],
   }
 }

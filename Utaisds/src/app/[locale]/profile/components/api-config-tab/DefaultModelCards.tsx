@@ -7,7 +7,7 @@ import { ModelCapabilityDropdown } from '@/components/ui/config-modals/ModelCapa
 import type { CapabilityValue, ModelCapabilities } from '@/lib/model-config-contract'
 
 // ---------- types ----------
-type ModelType = 'llm' | 'image' | 'video' | 'audio' | 'lipsync' | 'voicedesign'
+type ModelType = 'text' | 'image' | 'video' | 'tts' | 'lipsync' | 'voicedesign'
 
 interface ModelOption {
     modelKey: string
@@ -74,6 +74,10 @@ interface DefaultModelCardsProps {
     onSyncModels?: () => void
     /** 同步模型按钮是否正在加载 */
     isSyncingModels?: boolean
+    /** UT-KEY 是否已配置（未配置时禁用同步按钮） */
+    utKeyConfigured?: boolean
+    /** 同步结果反馈 */
+    syncResult?: { type: 'success' | 'error'; message: string } | null
 }
 
 // ---------- helpers ----------
@@ -104,7 +108,24 @@ function resolveModel(
     const currentKey = defaultModels[field]
     const parsed = parseModelKey(currentKey)
     const normalizedKey = parsed ? encodeModelKey(parsed.provider, parsed.modelId) : ''
-    const current = normalizedKey ? options.find((option) => option.modelKey === normalizedKey) ?? null : null
+
+    // 先尝试精确匹配
+    let current: ModelOption | null = normalizedKey
+        ? options.find((option) => option.modelKey === normalizedKey) ?? null
+        : null
+
+    // 如果精确匹配失败，尝试兼容旧格式
+    // 旧格式: gateway::122，新格式: gateway::122__text
+    if (!current && normalizedKey && normalizedKey.startsWith('gateway::')) {
+        // 检查是否是旧格式（不包含 __）
+        const withoutPrefix = normalizedKey.slice('gateway::'.length)
+        if (!withoutPrefix.includes('__')) {
+            // 旧格式，尝试构造新格式进行匹配
+            const newFormatKey = `${normalizedKey}__${modelType}`
+            current = options.find((option) => option.modelKey === newFormatKey) ?? null
+        }
+    }
+
     return { options, normalizedKey, current }
 }
 
@@ -122,7 +143,7 @@ function computeCapabilityFields(current: ModelOption | null, modelType: keyof M
 
 // ---------- sub-components ----------
 
-/** Smart model selector: ModelCapabilityDropdown for llm/image/video, native select for others */
+/** Smart model selector: ModelCapabilityDropdown for text/image/video, native select for others */
 function SmartSelector({
     field,
     modelType,
@@ -146,7 +167,7 @@ function SmartSelector({
 }) {
     const capabilityFields = computeCapabilityFields(current, modelType as keyof ModelCapabilities)
 
-    if (modelType === 'video' || modelType === 'image' || modelType === 'llm') {
+    if (modelType === 'video' || modelType === 'image' || modelType === 'text') {
         return (
             <ModelCapabilityDropdown
                 models={options.map((opt) => ({
@@ -230,6 +251,8 @@ export function DefaultModelCards(allProps: DefaultModelCardsProps) {
         gatewayModelOptions,
         onSyncModels,
         isSyncingModels,
+        utKeyConfigured,
+        syncResult,
     } = allProps
 
     // Pipeline unified override state
@@ -279,9 +302,9 @@ export function DefaultModelCards(allProps: DefaultModelCardsProps) {
     }, [pipelineGlobalCurrent, allProps, defaultModels])
 
     // Resolve all models
-    const textModel = resolveModel('analysisModel', 'llm', defaultModels, getEnabledModelsByType, parseModelKey, encodeModelKey, gatewayModelOptions)
+    const textModel = resolveModel('analysisModel', 'text', defaultModels, getEnabledModelsByType, parseModelKey, encodeModelKey, gatewayModelOptions)
     const videoModel = resolveModel('videoModel', 'video', defaultModels, getEnabledModelsByType, parseModelKey, encodeModelKey, gatewayModelOptions)
-    const audioModel = resolveModel('audioModel', 'audio', defaultModels, getEnabledModelsByType, parseModelKey, encodeModelKey, gatewayModelOptions)
+    const audioModel = resolveModel('audioModel', 'tts', defaultModels, getEnabledModelsByType, parseModelKey, encodeModelKey, gatewayModelOptions)
     const lipsyncModel = resolveModel('lipSyncModel', 'lipsync', defaultModels, getEnabledModelsByType, parseModelKey, encodeModelKey, gatewayModelOptions)
     const voiceDesignModel = resolveModel('voiceDesignModel', 'voicedesign', defaultModels, getEnabledModelsByType, parseModelKey, encodeModelKey, gatewayModelOptions)
 
@@ -314,14 +337,27 @@ export function DefaultModelCards(allProps: DefaultModelCardsProps) {
                             <h2 className="text-xl font-bold text-[var(--glass-text-primary)]">{t('defaultModels')}</h2>
                         </div>
                         {onSyncModels && (
-                            <button
-                                onClick={onSyncModels}
-                                disabled={isSyncingModels}
-                                className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                            >
-                                <AppIcon name="refresh" className={`w-4 h-4 ${isSyncingModels ? 'animate-spin' : ''}`} />
-                                {isSyncingModels ? t('syncing') : t('syncModels')}
-                            </button>
+                            <div className="flex flex-col items-end gap-1.5">
+                                <button
+                                    onClick={onSyncModels}
+                                    disabled={isSyncingModels || utKeyConfigured === false}
+                                    title={utKeyConfigured === false ? '请先配置 UT-KEY' : undefined}
+                                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    <AppIcon name="refresh" className={`w-4 h-4 ${isSyncingModels ? 'animate-spin' : ''}`} />
+                                    {isSyncingModels ? t('syncing') : t('syncModels')}
+                                </button>
+                                {syncResult && (
+                                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                                        syncResult.type === 'success'
+                                            ? 'bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20'
+                                            : 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20'
+                                    }`}>
+                                        <AppIcon name={syncResult.type === 'success' ? 'check' : 'close'} className="w-3.5 h-3.5 shrink-0" />
+                                        <span>{syncResult.message}</span>
+                                    </div>
+                                )}
+                            </div>
                         )}
                     </div>
                     <p className="text-sm text-[var(--glass-text-secondary)] ml-[38px]">{t('defaultModel.hint')}</p>
@@ -356,7 +392,7 @@ export function DefaultModelCards(allProps: DefaultModelCardsProps) {
                         <h4 className="text-[14px] font-bold text-[var(--glass-text-primary)] mb-0.5">{t('defaultModelSection.coreTextTitle')}</h4>
                         <p className="text-xs text-[var(--glass-text-tertiary)] mb-3">{t('defaultModelDesc.analysisModel')}</p>
                         <SmartSelector
-                            field="analysisModel" modelType="llm"
+                            field="analysisModel" modelType="text"
                             options={textModel.options} normalizedKey={textModel.normalizedKey} current={textModel.current}
                             placeholder={t('defaultModelSection.corePlaceholder')}
                             locale={locale} t={t} props={allProps}
@@ -489,7 +525,7 @@ export function DefaultModelCards(allProps: DefaultModelCardsProps) {
                     <div className="glass-surface p-5 rounded-2xl shadow-sm bg-gradient-to-br from-[var(--glass-bg-surface)] to-transparent">
                         <h4 className="text-sm font-semibold text-[var(--glass-text-primary)] mb-4">{t('defaultModelSection.extTTS')}</h4>
                         <SmartSelector
-                            field="audioModel" modelType="audio"
+                            field="audioModel" modelType="tts"
                             options={audioModel.options} normalizedKey={audioModel.normalizedKey} current={audioModel.current}
                             placeholder={t('defaultModelSection.extPlaceholder')}
                             locale={locale} t={t} props={allProps}

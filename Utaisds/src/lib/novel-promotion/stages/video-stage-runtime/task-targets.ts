@@ -48,7 +48,7 @@ export function buildPanelLipTargets(storyboards: Storyboard[]): VideoTaskTarget
         key: `panel-lip:${panel.id}`,
         targetType: 'NovelPromotionPanel',
         targetId: panel.id,
-        types: ['lip_sync'],
+        types: ['lipsync'],
         resource: 'video',
         hasOutput: !!panel.lipSyncVideoUrl,
       })

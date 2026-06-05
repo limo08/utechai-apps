@@ -28,7 +28,7 @@ const TypeIcon = ({
   className?: string
 }) => {
   switch (type) {
-    case 'llm':
+    case 'text':
       return (
         <AppIcon name="menu" className={className} />
       )
@@ -40,7 +40,7 @@ const TypeIcon = ({
       return (
         <AppIcon name="video" className={className} />
       )
-    case 'audio':
+    case 'tts':
       return (
         <AppIcon name="audioWave" className={className} />
       )
@@ -49,23 +49,23 @@ const TypeIcon = ({
 
 const typeLabel = (type: ProviderCardModelType, t: ProviderCardTranslator) => {
   switch (type) {
-    case 'llm':
+    case 'text':
       return t('typeText')
     case 'image':
       return t('typeImage')
     case 'video':
       return t('typeVideo')
-    case 'audio':
+    case 'tts':
       return t('typeAudio')
   }
 }
 
-const MODEL_TYPES: readonly ProviderCardModelType[] = ['llm', 'image', 'video', 'audio']
+const MODEL_TYPES: readonly ProviderCardModelType[] = ['text', 'image', 'video', 'tts']
 
 export function getAddableModelTypesForProvider(providerId: string): ProviderCardModelType[] {
   const providerKey = getProviderKey(providerId)
-  if (providerKey === 'openai-compatible') return ['llm', 'image', 'video']
-  return ['llm', 'image', 'video', 'audio']
+  if (providerKey === 'openai-compatible') return ['text', 'image', 'video']
+  return ['text', 'image', 'video', 'tts']
 }
 
 export function shouldShowOpenAICompatVideoHint(
@@ -103,7 +103,7 @@ function formatPriceAmount(amount: number): string {
 
 function getModelPriceTexts(model: CustomModel, t: ProviderCardTranslator): string[] {
   if (
-    model.type === 'llm'
+    model.type === 'text'
     && typeof model.priceInput === 'number'
     && Number.isFinite(model.priceInput)
     && typeof model.priceOutput === 'number'
@@ -160,7 +160,7 @@ export function ProviderAdvancedFields({
     !!currentType
     && addableModelTypes.has(currentType)
     && state.showAddForm !== currentType
-  const defaultAddType: ProviderCardModelType = providerKey === 'openrouter' ? 'llm' : 'image'
+  const defaultAddType: ProviderCardModelType = providerKey === 'openrouter' ? 'text' : 'image'
   const useTabbedLayout = state.hasModels || shouldShowDefaultTabs(provider.id)
   const shouldShowVideoHint = shouldShowOpenAICompatVideoHint(provider.id, currentType)
 

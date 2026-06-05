@@ -212,7 +212,7 @@ export async function generateVoiceLine(params: {
     throw new Error('Voice line text is empty')
   }
 
-  const audioSelection = await resolveModelSelectionOrSingle(params.userId, params.audioModel, 'audio')
+  const audioSelection = await resolveModelSelectionOrSingle(params.userId, params.audioModel, 'tts')
   const providerKey = getProviderKey(audioSelection.provider).toLowerCase()
   const voiceBinding = resolveVoiceBindingForProvider({
     providerKey,

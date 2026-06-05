@@ -42,7 +42,7 @@ export interface ModelFormState {
   optionPricesJson?: string
 }
 
-export type ProviderCardModelType = 'llm' | 'image' | 'video' | 'audio'
+export type ProviderCardModelType = 'text' | 'image' | 'video' | 'tts'
 
 export type ProviderCardGroupedModels = Partial<Record<ProviderCardModelType, CustomModel[]>>
 

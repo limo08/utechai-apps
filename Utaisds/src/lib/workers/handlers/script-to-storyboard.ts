@@ -136,7 +136,7 @@ export async function handleScriptToStoryboardTask(job: Job<TaskJobData>) {
     resolveProjectModelCapabilityGenerationOptions({
       projectId,
       userId: job.data.userId,
-      modelType: 'llm',
+      modelType: 'text',
       modelKey: model,
     }),
     getUserWorkflowConcurrencyConfig(job.data.userId),

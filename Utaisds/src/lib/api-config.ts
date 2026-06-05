@@ -19,6 +19,7 @@ import type {
   OpenAICompatMediaTemplateSource,
 } from './openai-compat-media-template'
 import { validateOpenAICompatMediaTemplate } from './user-api/model-template/validator'
+import { getNextUtKey } from './utkey-pool'
 
 export interface CustomModel {
   modelId: string
@@ -35,7 +36,7 @@ export interface CustomModel {
   price: number
 }
 
-export type ModelMediaType = 'llm' | 'image' | 'video' | 'audio' | 'lipsync'
+export type ModelMediaType = 'text' | 'image' | 'video' | 'tts' | 'lipsync'
 
 export interface ModelSelection {
   provider: string
@@ -94,11 +95,12 @@ function readTrimmedString(value: unknown): string {
 
 function isUnifiedModelType(value: unknown): value is UnifiedModelType {
   return (
-    value === 'llm'
+    value === 'text'
     || value === 'image'
     || value === 'video'
-    || value === 'audio'
+    || value === 'tts'
     || value === 'lipsync'
+    || value === 'voice_design'
   )
 }
 
@@ -108,6 +110,41 @@ function isGatewayRoute(value: unknown): value is GatewayRouteType {
 
 function isLlmProtocol(value: unknown): value is LlmProtocolType {
   return value === 'responses' || value === 'chat-completions'
+}
+
+// ─── Gateway model helpers ─────────────────────────────────────
+// 网关模型（AvailableModel 表）的 modelKey 格式: gateway::{modelId}__{type}
+// 例如: gateway::122__text, gateway::45__image
+// 调用时统一走 openai-compat 路径，用 UT-KEY 作为 Bearer Token
+
+const GATEWAY_PROVIDER = 'gateway'
+
+const KNOWN_UNIFIED_TYPES: ReadonlySet<string> = new Set([
+  'text', 'image', 'video', 'tts', 'lipsync', 'voice_design',
+])
+
+export function isGatewayProvider(providerId: string): boolean {
+  return providerId === GATEWAY_PROVIDER
+}
+
+export function isGatewayModelKey(modelKey: string): boolean {
+  const parsed = parseModelKeyStrict(modelKey)
+  return !!parsed && parsed.provider === GATEWAY_PROVIDER
+}
+
+/**
+ * 从网关 modelId 中提取实际模型 ID（去掉 __{type} 后缀）。
+ * 例如: "122__text" → "122", "45__image" → "45"
+ */
+export function resolveGatewayModelId(rawModelId: string): string {
+  const suffixIndex = rawModelId.lastIndexOf('__')
+  if (suffixIndex > 0) {
+    const suffix = rawModelId.slice(suffixIndex + 2)
+    if (KNOWN_UNIFIED_TYPES.has(suffix)) {
+      return rawModelId.slice(0, suffixIndex)
+    }
+  }
+  return rawModelId
 }
 
 function assertModelKey(value: string, field: string): { provider: string; modelId: string; modelKey: string } {
@@ -326,6 +363,22 @@ export async function resolveModelSelection(
   mediaType: ModelMediaType,
 ): Promise<ModelSelection> {
   const parsed = assertModelKey(model, `${mediaType} model`)
+
+  // ── Gateway model: 来自 AvailableModel 表，不在 customModels 中 ──
+  if (parsed.provider === GATEWAY_PROVIDER) {
+    const actualModelId = resolveGatewayModelId(parsed.modelId)
+    if (!actualModelId) {
+      throw new Error(`MODEL_NOT_FOUND: ${parsed.modelKey} has empty model id`)
+    }
+    const modelKey = composeModelKey(GATEWAY_PROVIDER, actualModelId)
+    return {
+      provider: GATEWAY_PROVIDER,
+      modelId: actualModelId,
+      modelKey,
+      mediaType,
+    }
+  }
+
   const models = await getModelsByType(userId, mediaType)
 
   const exact = findModelByKey(models, parsed.modelKey)
@@ -334,7 +387,7 @@ export async function resolveModelSelection(
   }
 
   const providerKey = getProviderKey(exact.provider).toLowerCase()
-  const llmProtocol = mediaType === 'llm' && providerKey === 'openai-compatible'
+  const llmProtocol = mediaType === 'text' && providerKey === 'openai-compatible'
     ? (exact.llmProtocol || 'chat-completions')
     : undefined
   const compatMediaTemplate = (mediaType === 'image' || mediaType === 'video') && providerKey === 'openai-compatible'
@@ -365,7 +418,7 @@ async function resolveSingleModelSelection(
 
   const model = models[0]
   const providerKey = getProviderKey(model.provider).toLowerCase()
-  const llmProtocol = mediaType === 'llm' && providerKey === 'openai-compatible'
+  const llmProtocol = mediaType === 'text' && providerKey === 'openai-compatible'
     ? (model.llmProtocol || 'chat-completions')
     : undefined
   const compatMediaTemplate = (mediaType === 'image' || mediaType === 'video') && providerKey === 'openai-compatible'
@@ -416,6 +469,25 @@ export interface ProviderConfig {
 }
 
 export async function getProviderConfig(userId: string, providerId: string): Promise<ProviderConfig> {
+  // ── Gateway provider: 使用 MODEL_GATEWAY_URL + UT-KEY ──
+  if (providerId === GATEWAY_PROVIDER) {
+    const gatewayUrl = process.env.MODEL_GATEWAY_URL
+    if (!gatewayUrl) {
+      throw new Error('MODEL_GATEWAY_URL_NOT_CONFIGURED: 环境变量 MODEL_GATEWAY_URL 未设置')
+    }
+    const utKey = await getNextUtKey(userId)
+    if (!utKey) {
+      throw new Error('UT_KEY_NOT_CONFIGURED: 请先在设置中心配置 UT-KEY')
+    }
+    return {
+      id: GATEWAY_PROVIDER,
+      name: 'Model Gateway',
+      apiKey: utKey,
+      baseUrl: gatewayUrl,
+      gatewayRoute: 'openai-compat',
+    }
+  }
+
   const { providers } = await readUserConfig(userId)
   const provider = pickProviderStrict(providers, providerId)
 
@@ -462,7 +534,7 @@ export async function getModelsByType(userId: string, type: ModelMediaType): Pro
  * 解析模型 ID（严格从 model_key 提取）
  */
 export async function resolveModelId(userId: string, model: string): Promise<string> {
-  const selection = await resolveModelSelection(userId, model, 'llm')
+  const selection = await resolveModelSelection(userId, model, 'text')
   return selection.modelId
 }
 
@@ -482,7 +554,7 @@ export async function getModelPrice(userId: string, model: string): Promise<numb
  * 根据音频模型键获取音频 API Key（未传模型时要求仅存在单一音频模型）
  */
 export async function getAudioApiKey(userId: string, model?: string | null): Promise<string> {
-  const selection = await resolveModelSelectionOrSingle(userId, model, 'audio')
+  const selection = await resolveModelSelectionOrSingle(userId, model, 'tts')
   return (await getProviderConfig(userId, selection.provider)).apiKey
 }
 

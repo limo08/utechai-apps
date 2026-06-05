@@ -1,5 +1,5 @@
 export type OfficialProviderKey = 'bailian' | 'siliconflow'
-export type OfficialModelModality = 'llm' | 'image' | 'video' | 'audio'
+export type OfficialModelModality = 'text' | 'image' | 'video' | 'tts'
 
 interface RegisterOfficialModelInput {
   provider: OfficialProviderKey

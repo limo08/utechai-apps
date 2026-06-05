@@ -1,4 +1,4 @@
-export type UnifiedModelType = 'llm' | 'image' | 'video' | 'audio' | 'lipsync'
+export type UnifiedModelType = 'text' | 'image' | 'video' | 'tts' | 'lipsync' | 'voice_design'
 export type CapabilityValue = string | number | boolean
 export type CapabilityOptionValue = CapabilityValue
 export type CapabilitySelections = Record<string, Record<string, CapabilityValue>>
@@ -56,12 +56,18 @@ export interface LipSyncCapabilities {
   fieldI18n?: CapabilityFieldI18nMap
 }
 
+export interface VoiceDesignCapabilities {
+  voiceOptions?: string[]
+  fieldI18n?: CapabilityFieldI18nMap
+}
+
 export interface ModelCapabilities {
-  llm?: LLMCapabilities
+  text?: LLMCapabilities
   image?: ImageCapabilities
   video?: VideoCapabilities
-  audio?: AudioCapabilities
+  tts?: AudioCapabilities
   lipsync?: LipSyncCapabilities
+  voice_design?: VoiceDesignCapabilities
 }
 
 export interface ParsedModelKey {
@@ -71,11 +77,12 @@ export interface ParsedModelKey {
 }
 
 const CAPABILITY_NAMESPACES = new Set<keyof ModelCapabilities>([
-  'llm',
+  'text',
   'image',
   'video',
-  'audio',
+  'tts',
   'lipsync',
+  'voice_design',
 ])
 
 const LLM_ALLOWED_FIELDS = new Set<keyof LLMCapabilities>([
@@ -107,6 +114,11 @@ const AUDIO_ALLOWED_FIELDS = new Set<keyof AudioCapabilities>([
 
 const LIPSYNC_ALLOWED_FIELDS = new Set<keyof LipSyncCapabilities>([
   'modeOptions',
+  'fieldI18n',
+])
+
+const VOICE_DESIGN_ALLOWED_FIELDS = new Set<keyof VoiceDesignCapabilities>([
+  'voiceOptions',
   'fieldI18n',
 ])
 
@@ -266,12 +278,12 @@ function validateLLMCapabilities(issues: CapabilityValidationIssue[], raw: unkno
   if (options !== undefined && !isStringArray(options)) {
     issues.push({
       code: 'CAPABILITY_FIELD_INVALID',
-      field: 'capabilities.llm.reasoningEffortOptions',
+      field: 'capabilities.text.reasoningEffortOptions',
       message: 'reasoningEffortOptions must be a non-empty string array',
     })
   }
 
-  validateFieldI18nMap(issues, 'llm', raw.fieldI18n, {
+  validateFieldI18nMap(issues, 'text', raw.fieldI18n, {
     reasoningEffort: isStringArray(options) ? options : undefined,
   })
 }
@@ -373,7 +385,7 @@ function validateAudioCapabilities(issues: CapabilityValidationIssue[], raw: unk
   if (voiceOptions !== undefined && !isStringArray(voiceOptions)) {
     issues.push({
       code: 'CAPABILITY_FIELD_INVALID',
-      field: 'capabilities.audio.voiceOptions',
+      field: 'capabilities.tts.voiceOptions',
       message: 'voiceOptions must be a non-empty string array',
     })
   }
@@ -382,12 +394,12 @@ function validateAudioCapabilities(issues: CapabilityValidationIssue[], raw: unk
   if (rateOptions !== undefined && !isStringArray(rateOptions)) {
     issues.push({
       code: 'CAPABILITY_FIELD_INVALID',
-      field: 'capabilities.audio.rateOptions',
+      field: 'capabilities.tts.rateOptions',
       message: 'rateOptions must be a non-empty string array',
     })
   }
 
-  validateFieldI18nMap(issues, 'audio', raw.fieldI18n, {
+  validateFieldI18nMap(issues, 'tts', raw.fieldI18n, {
     voice: isStringArray(voiceOptions) ? voiceOptions : undefined,
     rate: isStringArray(rateOptions) ? rateOptions : undefined,
   })
@@ -406,6 +418,23 @@ function validateLipSyncCapabilities(issues: CapabilityValidationIssue[], raw: u
 
   validateFieldI18nMap(issues, 'lipsync', raw.fieldI18n, {
     mode: isStringArray(modeOptions) ? modeOptions : undefined,
+  })
+}
+
+function validateVoiceDesignCapabilities(issues: CapabilityValidationIssue[], raw: unknown) {
+  if (!isRecord(raw)) return
+
+  const voiceOptions = raw.voiceOptions
+  if (voiceOptions !== undefined && !isStringArray(voiceOptions)) {
+    issues.push({
+      code: 'CAPABILITY_FIELD_INVALID',
+      field: 'capabilities.voice_design.voiceOptions',
+      message: 'voiceOptions must be a non-empty string array',
+    })
+  }
+
+  validateFieldI18nMap(issues, 'voice_design', raw.fieldI18n, {
+    voice: isStringArray(voiceOptions) ? voiceOptions : undefined,
   })
 }
 
@@ -493,23 +522,26 @@ export function validateModelCapabilities(
     }
   }
 
-  validateNamespaceShape(issues, 'llm', capabilities.llm)
+  validateNamespaceShape(issues, 'text', capabilities.text)
   validateNamespaceShape(issues, 'image', capabilities.image)
   validateNamespaceShape(issues, 'video', capabilities.video)
-  validateNamespaceShape(issues, 'audio', capabilities.audio)
+  validateNamespaceShape(issues, 'tts', capabilities.tts)
   validateNamespaceShape(issues, 'lipsync', capabilities.lipsync)
+  validateNamespaceShape(issues, 'voice_design', capabilities.voice_design)
 
-  validateNamespaceAllowedFields(issues, 'llm', capabilities.llm, LLM_ALLOWED_FIELDS)
+  validateNamespaceAllowedFields(issues, 'text', capabilities.text, LLM_ALLOWED_FIELDS)
   validateNamespaceAllowedFields(issues, 'image', capabilities.image, IMAGE_ALLOWED_FIELDS)
   validateNamespaceAllowedFields(issues, 'video', capabilities.video, VIDEO_ALLOWED_FIELDS)
-  validateNamespaceAllowedFields(issues, 'audio', capabilities.audio, AUDIO_ALLOWED_FIELDS)
+  validateNamespaceAllowedFields(issues, 'tts', capabilities.tts, AUDIO_ALLOWED_FIELDS)
   validateNamespaceAllowedFields(issues, 'lipsync', capabilities.lipsync, LIPSYNC_ALLOWED_FIELDS)
+  validateNamespaceAllowedFields(issues, 'voice_design', capabilities.voice_design, VOICE_DESIGN_ALLOWED_FIELDS)
 
-  validateLLMCapabilities(issues, capabilities.llm)
+  validateLLMCapabilities(issues, capabilities.text)
   validateImageCapabilities(issues, capabilities.image)
   validateVideoCapabilities(issues, capabilities.video)
-  validateAudioCapabilities(issues, capabilities.audio)
+  validateAudioCapabilities(issues, capabilities.tts)
   validateLipSyncCapabilities(issues, capabilities.lipsync)
+  validateVoiceDesignCapabilities(issues, capabilities.voice_design)
 
   return issues
 }

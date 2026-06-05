@@ -15,6 +15,8 @@ export default function SignIn() {
   const router = useRouter()
   const t = useTranslations('auth')
 
+  const modelGatewayUrl = process.env.MODEL_GATEWAY_URL_DEV || process.env.MODEL_GATEWAY_URL
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -108,9 +110,9 @@ export default function SignIn() {
             <div className="mt-6 text-center">
               <p className="text-[var(--glass-text-secondary)]">
                 {t('noAccount')}{" "}
-                <Link href={{ pathname: '/auth/signup' }} className="text-[var(--glass-tone-info-fg)] hover:underline font-medium">
+                <a href={`${modelGatewayUrl}/register`} target="_blank" rel="noopener noreferrer" className="text-[var(--glass-tone-info-fg)] hover:underline font-medium">
                   {t('signupNow')}
-                </Link>
+                </a>
               </p>
             </div>
 

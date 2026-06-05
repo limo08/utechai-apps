@@ -125,7 +125,7 @@ export function mapTaskSSEEventToRunEvents(event: SSEEvent): RunStreamEvent[] {
     rawStepId ||
     (
       event.type === TASK_SSE_EVENT_TYPE.STREAM
-      ? `step:${event.taskType || 'llm'}`
+      ? `step:${event.taskType || 'text'}`
       : undefined)
   const stepAttempt = readStepField(payload, 'stepAttempt')
   const stepTitle = rawStepTitle || flowStageTitle || undefined

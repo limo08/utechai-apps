@@ -15,7 +15,7 @@ describe('official model registry', () => {
     expect(() =>
       assertOfficialModelRegistered({
         provider: 'bailian',
-        modality: 'llm',
+        modality: 'text',
         modelId: 'qwen-plus',
       }),
     ).toThrow(/MODEL_NOT_REGISTERED/)

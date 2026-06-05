@@ -354,11 +354,11 @@
     }
   },
   {
-    "modelType": "llm",
+    "modelType": "text",
     "provider": "google",
     "modelId": "gemini-3.1-pro-preview",
     "capabilities": {
-      "llm": {
+      "text": {
         "reasoningEffortOptions": [
           "low",
           "medium",
@@ -368,11 +368,11 @@
     }
   },
   {
-    "modelType": "llm",
+    "modelType": "text",
     "provider": "google",
     "modelId": "gemini-3.1-flash-lite-preview",
     "capabilities": {
-      "llm": {
+      "text": {
         "reasoningEffortOptions": [
           "minimal",
           "low",
@@ -383,11 +383,11 @@
     }
   },
   {
-    "modelType": "llm",
+    "modelType": "text",
     "provider": "google",
     "modelId": "gemini-3-flash-preview",
     "capabilities": {
-      "llm": {
+      "text": {
         "reasoningEffortOptions": [
           "minimal",
           "low",
@@ -398,11 +398,11 @@
     }
   },
   {
-    "modelType": "llm",
+    "modelType": "text",
     "provider": "ark",
     "modelId": "doubao-seed-1-8-251228",
     "capabilities": {
-      "llm": {
+      "text": {
         "reasoningEffortOptions": [
           "minimal",
           "low",
@@ -413,11 +413,11 @@
     }
   },
   {
-    "modelType": "llm",
+    "modelType": "text",
     "provider": "ark",
     "modelId": "doubao-seed-2-0-pro-260215",
     "capabilities": {
-      "llm": {
+      "text": {
         "reasoningEffortOptions": [
           "minimal",
           "low",
@@ -428,11 +428,11 @@
     }
   },
   {
-    "modelType": "llm",
+    "modelType": "text",
     "provider": "ark",
     "modelId": "doubao-seed-2-0-lite-260215",
     "capabilities": {
-      "llm": {
+      "text": {
         "reasoningEffortOptions": [
           "minimal",
           "low",
@@ -443,11 +443,11 @@
     }
   },
   {
-    "modelType": "llm",
+    "modelType": "text",
     "provider": "ark",
     "modelId": "doubao-seed-2-0-mini-260215",
     "capabilities": {
-      "llm": {
+      "text": {
         "reasoningEffortOptions": [
           "minimal",
           "low",

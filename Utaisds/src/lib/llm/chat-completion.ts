@@ -82,7 +82,9 @@ export async function chatCompletion(
   const providerConfig = await getProviderConfig(userId, provider)
   const gatewayRoute = OFFICIAL_ONLY_PROVIDER_KEYS.has(providerKey)
     ? 'official'
-    : (providerConfig.gatewayRoute || resolveModelGatewayRoute(provider))
+    : providerKey === 'gateway'
+      ? 'openai-compat'
+      : (providerConfig.gatewayRoute || resolveModelGatewayRoute(provider))
 
   const {
     temperature = 0.7,
@@ -116,14 +118,20 @@ export async function chatCompletion(
       if (gatewayRoute === 'openai-compat') {
         // openai-compatible protocol probing only applies to openai-compatible + llm.
         // gemini-compatible is explicitly excluded and must not enter this branch.
-        if (providerKey !== 'openai-compatible') {
+        if (providerKey !== 'openai-compatible' && providerKey !== 'gateway') {
           throw new Error(`OPENAI_COMPAT_PROVIDER_UNSUPPORTED: ${provider}`)
         }
-        if (!selection.llmProtocol) {
+
+        // Gateway models always use chat-completions (no protocol probe needed)
+        const effectiveProtocol = providerKey === 'gateway'
+          ? 'chat-completions'
+          : selection.llmProtocol
+
+        if (!effectiveProtocol) {
           throw new Error(`MODEL_LLM_PROTOCOL_REQUIRED: ${selection.modelKey}`)
         }
 
-        const completion = selection.llmProtocol === 'responses'
+        const completion = effectiveProtocol === 'responses'
           ? await runOpenAICompatResponsesCompletion({
             userId,
             providerId: provider,
@@ -139,7 +147,7 @@ export async function chatCompletion(
             temperature,
           })
         const completionParts = getCompletionParts(completion)
-        const compatEngine = selection.llmProtocol === 'responses'
+        const compatEngine = effectiveProtocol === 'responses'
           ? 'openai_compat_responses'
           : 'openai_compat_chat_completions'
         logLlmRawOutput({
@@ -164,7 +172,7 @@ export async function chatCompletion(
             model: resolvedModelId,
             attempt,
             maxRetries,
-            llmProtocol: selection.llmProtocol,
+            llmProtocol: effectiveProtocol,
           },
         })
         return completion

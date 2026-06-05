@@ -8,7 +8,7 @@ import { AppIcon } from '@/components/ui/icons'
 interface ProviderSectionProps {
     title: string
     icon: React.ReactNode
-    type: 'audio' | 'lipsync'
+    type: 'tts' | 'lipsync'
     providers: Provider[]
     onUpdateApiKey: (providerId: string, apiKey: string) => void
     onUpdateInfo?: (providerId: string, name: string, baseUrl?: string) => void

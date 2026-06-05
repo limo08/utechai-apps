@@ -64,7 +64,7 @@
         "text": "文本分析",
         "tts": "语音合成",
         "voice": "配音",
-        "voice_design": "声音设计",
+        "voice_design": "音色设计",
         "lip_sync": "口型同步"
     },
     "actionTypes": {

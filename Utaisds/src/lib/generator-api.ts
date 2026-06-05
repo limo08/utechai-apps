@@ -94,7 +94,9 @@ export async function generateImage(
     const defaultGatewayRoute = resolveModelGatewayRoute(selection.provider)
     let gatewayRoute = OFFICIAL_ONLY_PROVIDER_KEYS.has(providerKey)
         ? 'official'
-        : (providerConfig.gatewayRoute || defaultGatewayRoute)
+        : providerKey === 'gateway'
+            ? 'openai-compat'
+            : (providerConfig.gatewayRoute || defaultGatewayRoute)
     if (providerKey === 'gemini-compatible') {
         // DEPRECATED: historical rows persisted gemini-compatible as openai-compat by default.
         // Runtime now resolves route by apiMode to avoid requiring data migration SQL.
@@ -224,7 +226,9 @@ export async function generateVideo(
     const defaultGatewayRoute = resolveModelGatewayRoute(selection.provider)
     const gatewayRoute = OFFICIAL_ONLY_PROVIDER_KEYS.has(providerKey)
         ? 'official'
-        : (providerConfig.gatewayRoute || defaultGatewayRoute)
+        : providerKey === 'gateway'
+            ? 'openai-compat'
+            : (providerConfig.gatewayRoute || defaultGatewayRoute)
 
     const { prompt, ...providerOptions } = options || {}
     if (gatewayRoute === 'openai-compat') {
@@ -294,7 +298,7 @@ export async function generateAudio(
         rate?: number
     }
 ): Promise<GenerateResult> {
-    const selection = await resolveModelSelection(userId, modelKey, 'audio')
+    const selection = await resolveModelSelection(userId, modelKey, 'tts')
     const providerKey = getProviderKey(selection.provider).toLowerCase()
     if (providerKey === 'bailian') {
         return await generateBailianAudio({

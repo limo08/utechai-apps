@@ -1,5 +1,5 @@
 import { Worker, type Job } from 'bullmq'
-import { queueRedis } from '@/lib/redis'
+import { bullmqConnection } from '@/lib/redis'
 import { QUEUE_NAME } from '@/lib/task/queues'
 import { TASK_TYPE, type TaskJobData } from '@/lib/task/types'
 import { getUserWorkflowConcurrencyConfig } from '@/lib/config-service'
@@ -60,7 +60,7 @@ export function createImageWorker() {
       })
     }),
     {
-      connection: queueRedis,
+      connection: bullmqConnection,
       concurrency: Number.parseInt(process.env.QUEUE_CONCURRENCY_IMAGE || '20', 10) || 20,
     },
   )

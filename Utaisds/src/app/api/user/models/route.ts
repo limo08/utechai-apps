@@ -46,11 +46,12 @@ interface UserModelOption {
 }
 
 interface UserModelsPayload {
-  llm: UserModelOption[]
+  text: UserModelOption[]
   image: UserModelOption[]
   video: UserModelOption[]
-  audio: UserModelOption[]
+  tts: UserModelOption[]
   lipsync: UserModelOption[]
+  voice_design: UserModelOption[]
 }
 
 const AUDIO_MODEL_EXCLUDED_IDS = new Set([
@@ -59,11 +60,12 @@ const AUDIO_MODEL_EXCLUDED_IDS = new Set([
 
 function isUnifiedModelType(type: unknown): type is UnifiedModelType {
   return (
-    type === 'llm'
+    type === 'text'
     || type === 'image'
     || type === 'video'
-    || type === 'audio'
+    || type === 'tts'
     || type === 'lipsync'
+    || type === 'voice_design'
   )
 }
 
@@ -158,7 +160,7 @@ function hasStoredProviderApiKey(provider: StoredProvider): boolean {
 }
 
 function isUserSelectableModel(model: StoredModel): boolean {
-  if (model.type !== 'audio') return true
+  if (model.type !== 'tts') return true
   const modelId = toModelId(model)
   return !AUDIO_MODEL_EXCLUDED_IDS.has(modelId)
 }
@@ -190,11 +192,12 @@ export const GET = apiHandler(async () => {
   })
 
   const grouped: UserModelsPayload = {
-    llm: [],
+    text: [],
     image: [],
     video: [],
-    audio: [],
+    tts: [],
     lipsync: [],
+    voice_design: [],
   }
 
   for (const model of modelsRaw) {
@@ -233,10 +236,11 @@ export const GET = apiHandler(async () => {
   }
 
   return NextResponse.json({
-    llm: dedupeByModelKey(grouped.llm),
+    text: dedupeByModelKey(grouped.text),
     image: dedupeByModelKey(grouped.image),
     video: dedupeByModelKey(grouped.video),
-    audio: dedupeByModelKey(grouped.audio),
+    tts: dedupeByModelKey(grouped.tts),
     lipsync: dedupeByModelKey(grouped.lipsync),
+    voice_design: dedupeByModelKey(grouped.voice_design),
   } satisfies UserModelsPayload)
 })

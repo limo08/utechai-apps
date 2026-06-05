@@ -76,7 +76,7 @@ export default function ProjectDetailPage() {
   const [modelSetupSaving, setModelSetupSaving] = useState(false)
 
   const userModelsQuery = useUserModels()
-  const llmModelOptions = userModelsQuery.data?.llm || []
+  const llmModelOptions = userModelsQuery.data?.text || []
 
   // 更新URL参数（stage 和/或 episode）
   const updateUrlParams = useCallback((updates: { stage?: string; episode?: string | null }) => {

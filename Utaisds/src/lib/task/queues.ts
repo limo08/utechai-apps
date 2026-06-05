@@ -1,5 +1,5 @@
 import { JobsOptions, Queue } from 'bullmq'
-import { queueRedis } from '@/lib/redis'
+import { bullmqConnection } from '@/lib/redis'
 import { QueueType, TaskType, TASK_TYPE, type TaskJobData } from './types'
 
 export const QUEUE_NAME = {
@@ -20,22 +20,22 @@ const defaultJobOptions: JobsOptions = {
 }
 
 export const imageQueue = new Queue<TaskJobData>(QUEUE_NAME.IMAGE, {
-  connection: queueRedis,
+  connection: bullmqConnection,
   defaultJobOptions,
 })
 
 export const videoQueue = new Queue<TaskJobData>(QUEUE_NAME.VIDEO, {
-  connection: queueRedis,
+  connection: bullmqConnection,
   defaultJobOptions,
 })
 
 export const voiceQueue = new Queue<TaskJobData>(QUEUE_NAME.VOICE, {
-  connection: queueRedis,
+  connection: bullmqConnection,
   defaultJobOptions,
 })
 
 export const textQueue = new Queue<TaskJobData>(QUEUE_NAME.TEXT, {
-  connection: queueRedis,
+  connection: bullmqConnection,
   defaultJobOptions,
 })
 
@@ -92,7 +92,8 @@ export async function addTaskJob(data: TaskJobData, opts?: JobsOptions) {
   const attempts = SINGLE_ATTEMPT_TASK_TYPES.has(data.type)
     ? 1
     : (typeof opts?.attempts === 'number' ? opts.attempts : undefined)
-  return await queue.add(data.type, data, {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return await queue.add(data.type as any, data, {
     jobId: data.taskId,
     priority,
     ...(opts || {}),

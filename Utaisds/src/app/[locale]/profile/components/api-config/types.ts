@@ -91,33 +91,33 @@ type PresetModel = Omit<CustomModel, 'enabled' | 'modelKey' | 'price'>
 // 预设模型
 export const PRESET_MODELS: PresetModel[] = [
     // 文本模型
-    { modelId: 'google/gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro', type: 'llm', provider: 'openrouter' },
-    { modelId: 'google/gemini-3-pro-preview', name: 'Gemini 3 Pro', type: 'llm', provider: 'openrouter' },
-    { modelId: 'google/gemini-3-flash-preview', name: 'Gemini 3 Flash', type: 'llm', provider: 'openrouter' },
-    { modelId: 'anthropic/claude-sonnet-4.5', name: 'Claude Sonnet 4.5', type: 'llm', provider: 'openrouter' },
-    { modelId: 'anthropic/claude-sonnet-4', name: 'Claude Sonnet 4', type: 'llm', provider: 'openrouter' },
-    { modelId: 'openai/gpt-5.4', name: 'GPT-5.4', type: 'llm', provider: 'openrouter' },
-    { modelId: 'google/gemini-3.1-flash-lite-preview', name: 'Gemini 3.1 Flash Lite', type: 'llm', provider: 'openrouter' },
+    { modelId: 'google/gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro', type: 'text', provider: 'openrouter' },
+    { modelId: 'google/gemini-3-pro-preview', name: 'Gemini 3 Pro', type: 'text', provider: 'openrouter' },
+    { modelId: 'google/gemini-3-flash-preview', name: 'Gemini 3 Flash', type: 'text', provider: 'openrouter' },
+    { modelId: 'anthropic/claude-sonnet-4.5', name: 'Claude Sonnet 4.5', type: 'text', provider: 'openrouter' },
+    { modelId: 'anthropic/claude-sonnet-4', name: 'Claude Sonnet 4', type: 'text', provider: 'openrouter' },
+    { modelId: 'openai/gpt-5.4', name: 'GPT-5.4', type: 'text', provider: 'openrouter' },
+    { modelId: 'google/gemini-3.1-flash-lite-preview', name: 'Gemini 3.1 Flash Lite', type: 'text', provider: 'openrouter' },
     // Google AI Studio 文本模型
-    { modelId: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro', type: 'llm', provider: 'google' },
-    { modelId: 'gemini-3-flash-preview', name: 'Gemini 3 Flash', type: 'llm', provider: 'google' },
-    { modelId: 'gemini-3.1-flash-lite-preview', name: 'Gemini 3.1 Flash-Lite', type: 'llm', provider: 'google' },
+    { modelId: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro', type: 'text', provider: 'google' },
+    { modelId: 'gemini-3-flash-preview', name: 'Gemini 3 Flash', type: 'text', provider: 'google' },
+    { modelId: 'gemini-3.1-flash-lite-preview', name: 'Gemini 3.1 Flash-Lite', type: 'text', provider: 'google' },
     // 火山引擎 Doubao 文本模型
-    { modelId: 'doubao-seed-1-8-251228', name: 'Doubao Seed 1.8', type: 'llm', provider: 'ark' },
-    { modelId: 'doubao-seed-2-0-pro-260215', name: 'Doubao Seed 2.0 Pro', type: 'llm', provider: 'ark' },
-    { modelId: 'doubao-seed-2-0-lite-260215', name: 'Doubao Seed 2.0 Lite', type: 'llm', provider: 'ark' },
-    { modelId: 'doubao-seed-2-0-mini-260215', name: 'Doubao Seed 2.0 Mini', type: 'llm', provider: 'ark' },
-    { modelId: 'doubao-seed-1-6-251015', name: 'Doubao Seed 1.6', type: 'llm', provider: 'ark' },
-    { modelId: 'doubao-seed-1-6-lite-251015', name: 'Doubao Seed 1.6 Lite', type: 'llm', provider: 'ark' },
+    { modelId: 'doubao-seed-1-8-251228', name: 'Doubao Seed 1.8', type: 'text', provider: 'ark' },
+    { modelId: 'doubao-seed-2-0-pro-260215', name: 'Doubao Seed 2.0 Pro', type: 'text', provider: 'ark' },
+    { modelId: 'doubao-seed-2-0-lite-260215', name: 'Doubao Seed 2.0 Lite', type: 'text', provider: 'ark' },
+    { modelId: 'doubao-seed-2-0-mini-260215', name: 'Doubao Seed 2.0 Mini', type: 'text', provider: 'ark' },
+    { modelId: 'doubao-seed-1-6-251015', name: 'Doubao Seed 1.6', type: 'text', provider: 'ark' },
+    { modelId: 'doubao-seed-1-6-lite-251015', name: 'Doubao Seed 1.6 Lite', type: 'text', provider: 'ark' },
     // 阿里云百炼文本模型
-    { modelId: 'qwen3.5-plus', name: 'Qwen 3.5 Plus', type: 'llm', provider: 'bailian' },
-    { modelId: 'qwen3.5-flash', name: 'Qwen 3.5 Flash', type: 'llm', provider: 'bailian' },
+    { modelId: 'qwen3.5-plus', name: 'Qwen 3.5 Plus', type: 'text', provider: 'bailian' },
+    { modelId: 'qwen3.5-flash', name: 'Qwen 3.5 Flash', type: 'text', provider: 'bailian' },
     // MiniMax 官方文本模型
-    { modelId: 'MiniMax-M2.5', name: 'MiniMax M2.5', type: 'llm', provider: 'minimax' },
-    { modelId: 'MiniMax-M2.5-highspeed', name: 'MiniMax M2.5 Highspeed', type: 'llm', provider: 'minimax' },
-    { modelId: 'MiniMax-M2.1', name: 'MiniMax M2.1', type: 'llm', provider: 'minimax' },
-    { modelId: 'MiniMax-M2.1-highspeed', name: 'MiniMax M2.1 Highspeed', type: 'llm', provider: 'minimax' },
-    { modelId: 'MiniMax-M2', name: 'MiniMax M2', type: 'llm', provider: 'minimax' },
+    { modelId: 'MiniMax-M2.5', name: 'MiniMax M2.5', type: 'text', provider: 'minimax' },
+    { modelId: 'MiniMax-M2.5-highspeed', name: 'MiniMax M2.5 Highspeed', type: 'text', provider: 'minimax' },
+    { modelId: 'MiniMax-M2.1', name: 'MiniMax M2.1', type: 'text', provider: 'minimax' },
+    { modelId: 'MiniMax-M2.1-highspeed', name: 'MiniMax M2.1 Highspeed', type: 'text', provider: 'minimax' },
+    { modelId: 'MiniMax-M2', name: 'MiniMax M2', type: 'text', provider: 'minimax' },
 
     // 图像模型
     { modelId: 'banana', name: 'Banana Pro', type: 'image', provider: 'fal' },
@@ -161,9 +161,9 @@ export const PRESET_MODELS: PresetModel[] = [
     { modelId: 'fal-ai/kling-video/v3/pro/image-to-video', name: 'Kling 3 Pro', type: 'video', provider: 'fal' },
 
     // 音频模型
-    { modelId: 'fal-ai/index-tts-2/text-to-speech', name: 'IndexTTS 2', type: 'audio', provider: 'fal' },
-    { modelId: 'qwen3-tts-vd-2026-01-26', name: 'Qwen3 TTS', type: 'audio', provider: 'bailian' },
-    { modelId: 'qwen-voice-design', name: 'Qwen Voice Design', type: 'audio', provider: 'bailian' },
+    { modelId: 'fal-ai/index-tts-2/text-to-speech', name: 'IndexTTS 2', type: 'tts', provider: 'fal' },
+    { modelId: 'qwen3-tts-vd-2026-01-26', name: 'Qwen3 TTS', type: 'tts', provider: 'bailian' },
+    { modelId: 'qwen-voice-design', name: 'Qwen Voice Design', type: 'tts', provider: 'bailian' },
     // 口型同步模型
     { modelId: 'fal-ai/kling-video/lipsync/audio-to-video', name: 'Kling Lip Sync', type: 'lipsync', provider: 'fal' },
     { modelId: 'vidu-lipsync', name: 'Vidu Lip Sync', type: 'lipsync', provider: 'vidu' },

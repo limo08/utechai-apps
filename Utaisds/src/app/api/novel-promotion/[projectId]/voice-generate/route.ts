@@ -157,7 +157,7 @@ export const POST = apiHandler(async (
   const selectedResolvedAudioModel = await resolveModelSelectionOrSingle(
     session.user.id,
     resolvedAudioModel || null,
-    'audio',
+    'tts',
   )
   const selectedProviderKey = getProviderKey(selectedResolvedAudioModel.provider).toLowerCase()
 

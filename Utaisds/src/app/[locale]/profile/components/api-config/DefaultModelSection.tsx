@@ -6,7 +6,7 @@ import { CustomModel } from './types'
 import { AppIcon } from '@/components/ui/icons'
 
 interface DefaultModelSectionProps {
-    type: 'llm' | 'image' | 'video' | 'lipsync'
+    type: 'text' | 'image' | 'video' | 'lipsync'
     models: CustomModel[]
     defaultModels: {
         analysisModel?: string
@@ -33,7 +33,7 @@ export function DefaultModelSection({
     }
 
     // 根据类型确定要显示的选择器
-    const selectors = type === 'llm'
+    const selectors = type === 'text'
         ? [{ field: 'analysisModel', label: t('defaultModel.analysis') }]
         : type === 'image'
             ? [{ field: 'imageModel', label: t('defaultModel.image') }]

@@ -18,7 +18,7 @@ function assertRegistered(modelId: string): void {
   ensureSiliconFlowCatalogRegistered()
   assertOfficialModelRegistered({
     provider: 'siliconflow',
-    modality: 'llm' satisfies OfficialModelModality,
+    modality: 'text' satisfies OfficialModelModality,
     modelId,
   })
 }

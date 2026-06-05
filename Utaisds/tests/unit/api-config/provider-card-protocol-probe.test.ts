@@ -12,9 +12,9 @@ describe('api-config provider-card protocol probe helpers', () => {
   })
 
   it('only probes openai-compatible llm models', () => {
-    expect(shouldProbeModelLlmProtocol({ providerId: 'openai-compatible:oa-1', modelType: 'llm' })).toBe(true)
+    expect(shouldProbeModelLlmProtocol({ providerId: 'openai-compatible:oa-1', modelType: 'text' })).toBe(true)
     expect(shouldProbeModelLlmProtocol({ providerId: 'openai-compatible:oa-1', modelType: 'image' })).toBe(false)
-    expect(shouldProbeModelLlmProtocol({ providerId: 'gemini-compatible:gm-1', modelType: 'llm' })).toBe(false)
+    expect(shouldProbeModelLlmProtocol({ providerId: 'gemini-compatible:gm-1', modelType: 'text' })).toBe(false)
   })
 
   it('re-probes only when modelId/provider changed on openai-compatible llm', () => {
@@ -22,7 +22,7 @@ describe('api-config provider-card protocol probe helpers', () => {
       modelId: 'gpt-4.1-mini',
       modelKey: 'openai-compatible:oa-1::gpt-4.1-mini',
       name: 'GPT 4.1 Mini',
-      type: 'llm',
+      type: 'text',
       provider: 'openai-compatible:oa-1',
       llmProtocol: 'chat-completions',
       llmProtocolCheckedAt: '2026-01-01T00:00:00.000Z',

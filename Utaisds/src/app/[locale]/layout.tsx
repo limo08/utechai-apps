@@ -7,6 +7,8 @@ import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import "../globals.css";
 import { Providers } from "./providers";
+import PageLoadingOverlay from "@/components/ui/PageLoadingOverlay";
+import RouteLoadingHandler from "@/components/ui/RouteLoadingHandler";
 
 import { locales } from '@/i18n/routing';
 
@@ -68,6 +70,8 @@ export default async function LocaleLayout({
                 <NextIntlClientProvider messages={messages}>
                     <Providers>
                         {children}
+                        <PageLoadingOverlay />
+                        <RouteLoadingHandler />
                     </Providers>
                 </NextIntlClientProvider>
 

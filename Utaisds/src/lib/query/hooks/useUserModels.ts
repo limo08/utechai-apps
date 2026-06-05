@@ -16,11 +16,12 @@ export interface UserModelOption {
 }
 
 export interface UserModelsPayload {
-    llm: UserModelOption[]
+    text: UserModelOption[]
     image: UserModelOption[]
     video: UserModelOption[]
-    audio: UserModelOption[]
+    tts: UserModelOption[]
     lipsync: UserModelOption[]
+    voice_design: UserModelOption[]
 }
 
 export function useUserModels() {
@@ -33,11 +34,12 @@ export function useUserModels() {
             }
             const data = await response.json()
             return {
-                llm: Array.isArray(data?.llm) ? data.llm : [],
+                text: Array.isArray(data?.text) ? data.text : [],
                 image: Array.isArray(data?.image) ? data.image : [],
                 video: Array.isArray(data?.video) ? data.video : [],
-                audio: Array.isArray(data?.audio) ? data.audio : [],
+                tts: Array.isArray(data?.tts) ? data.tts : [],
                 lipsync: Array.isArray(data?.lipsync) ? data.lipsync : [],
+                voice_design: Array.isArray(data?.voice_design) ? data.voice_design : [],
             } as UserModelsPayload
         },
     })

@@ -83,7 +83,9 @@ export async function chatCompletionStream(
   const providerConfig = await getProviderConfig(userId, provider)
   const gatewayRoute = OFFICIAL_ONLY_PROVIDER_KEYS.has(providerKey)
     ? 'official'
-    : (providerConfig.gatewayRoute || resolveModelGatewayRoute(provider))
+    : providerKey === 'gateway'
+      ? 'openai-compat'
+      : (providerConfig.gatewayRoute || resolveModelGatewayRoute(provider))
   const temperature = options.temperature ?? 0.7
   const reasoning = options.reasoning ?? true
   const reasoningEffort = options.reasoningEffort || 'high'
@@ -109,17 +111,23 @@ export async function chatCompletionStream(
     if (gatewayRoute === 'openai-compat') {
       // openai-compatible protocol probing only applies to openai-compatible + llm.
       // gemini-compatible is explicitly excluded and must not enter this branch.
-      if (providerKey !== 'openai-compatible') {
+      if (providerKey !== 'openai-compatible' && providerKey !== 'gateway') {
         throw new Error(`OPENAI_COMPAT_PROVIDER_UNSUPPORTED: ${provider}`)
       }
-      if (!selection.llmProtocol) {
+
+      // Gateway models always use chat-completions (no protocol probe needed)
+      const effectiveProtocol = providerKey === 'gateway'
+        ? 'chat-completions'
+        : selection.llmProtocol
+
+      if (!effectiveProtocol) {
         throw new Error(`MODEL_LLM_PROTOCOL_REQUIRED: ${selection.modelKey}`)
       }
-      const compatEngine = selection.llmProtocol === 'responses'
+      const compatEngine = effectiveProtocol === 'responses'
         ? 'openai_compat_responses'
         : 'openai_compat_chat_completions'
       emitStreamStage(callbacks, streamStep, 'streaming', 'openai-compat')
-      const completion = selection.llmProtocol === 'responses'
+      const completion = effectiveProtocol === 'responses'
         ? await runOpenAICompatResponsesCompletion({
           userId,
           providerId: provider,

@@ -65,6 +65,11 @@ if (!globalForRedis.__waoowaooRedis) {
 export const redis = singleton.app || (singleton.app = createAppRedis())
 export const queueRedis = singleton.queue || (singleton.queue = createQueueRedis())
 
+// BullMQ 期望的 ConnectionOptions 类型与 ioredis 的 Redis 类型在某些版本下不兼容
+// 这里导出一个兼容的连接对象供 BullMQ 使用
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const bullmqConnection = queueRedis as any
+
 export function createSubscriber() {
   const client = new Redis({
     ...buildBaseConfig(),

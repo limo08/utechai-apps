@@ -26,7 +26,7 @@ const resolveModelGatewayRouteMock = vi.hoisted(() => vi.fn(() => 'official'))
 
 const imageGeneratorGenerateMock = vi.hoisted(() => vi.fn(async () => ({ success: true, imageUrl: 'official-image' })))
 const videoGeneratorGenerateMock = vi.hoisted(() => vi.fn(async () => ({ success: true, videoUrl: 'official-video' })))
-const audioGeneratorGenerateMock = vi.hoisted(() => vi.fn(async () => ({ success: true, audioUrl: 'audio' })))
+const audioGeneratorGenerateMock = vi.hoisted(() => vi.fn(async () => ({ success: true, audioUrl: 'tts' })))
 
 const createImageGeneratorMock = vi.hoisted(() => vi.fn(() => ({ generate: imageGeneratorGenerateMock })))
 const createVideoGeneratorMock = vi.hoisted(() => vi.fn(() => ({ generate: videoGeneratorGenerateMock })))
@@ -227,13 +227,13 @@ describe('generator-api gateway routing', () => {
       provider: 'fal',
       modelId: 'tts-1',
       modelKey: 'fal::tts-1',
-      mediaType: 'audio',
+      mediaType: 'tts',
     })
 
     const result = await generateAudio('user-1', 'fal::tts-1', 'hello')
 
     expect(createAudioGeneratorMock).toHaveBeenCalledWith('fal')
-    expect(result).toEqual({ success: true, audioUrl: 'audio' })
+    expect(result).toEqual({ success: true, audioUrl: 'tts' })
   })
 
   it('routes bailian image generation to official provider adapter', async () => {
@@ -289,7 +289,7 @@ describe('generator-api gateway routing', () => {
       provider: 'bailian',
       modelId: 'bailian-tts',
       modelKey: 'bailian::bailian-tts',
-      mediaType: 'audio',
+      mediaType: 'tts',
     })
 
     const result = await generateAudio('user-1', 'bailian::bailian-tts', 'hello')

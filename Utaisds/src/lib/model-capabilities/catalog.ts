@@ -29,11 +29,12 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isUnifiedModelType(value: unknown): value is UnifiedModelType {
-  return value === 'llm'
+  return value === 'text'
     || value === 'image'
     || value === 'video'
-    || value === 'audio'
+    || value === 'tts'
     || value === 'lipsync'
+    || value === 'voice_design'
 }
 
 function readTrimmedString(value: unknown): string {

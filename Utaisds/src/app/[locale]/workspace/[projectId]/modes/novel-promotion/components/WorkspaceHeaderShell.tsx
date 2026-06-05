@@ -27,10 +27,12 @@ interface UserModelOption {
 }
 
 interface UserModelsPayload {
-  llm: UserModelOption[]
+  text: UserModelOption[]
   image: UserModelOption[]
   video: UserModelOption[]
-  audio: UserModelOption[]
+  tts: UserModelOption[]
+  lipsync: UserModelOption[]
+  voice_design: UserModelOption[]
 }
 
 interface WorkspaceHeaderShellProps {

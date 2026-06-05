@@ -400,14 +400,15 @@ model UsageCost {
 }
 
 model User {
-  id            String          @id @default(uuid())
-  name          String          @unique(map: "User_name_key")
-  email         String?
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @default(now()) @updatedAt
+  id              String          @id @default(uuid())
+  name            String          @unique(map: "User_name_key")
+  email           String?
+  emailVerified   DateTime?
+  image           String?
+  password        String?
+  gatewayUserId   String?         @unique(map: "User_gatewayUserId_key")
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @default(now()) @updatedAt
   accounts      Account[]
   projects      Project[]
   sessions      Session[]
@@ -1012,8 +1013,8 @@ model LegacyMediaRefBackup {
 /**
  * 从模型网关（UT-KEY 验证）获取到的可用模型，持久化存储。
  * 用于"默认模型配置"下拉框从数据库读取，支持 7 种模型类型：
- * llm(文本分析) | image(图像生成) | video(视频生成) | audio(语音合成)
- * lipsync(口型同步) | voice_design(音色设计) | other(其他)
+ * text(文本分析) | image(图像生成) | video(视频生成) | tts(语音合成)
+ * lip_sync(口型同步) | voice_design(音色设计) | other(其他)
  */
 model AvailableModel {
   id          String   @id @default(uuid())
@@ -1022,8 +1023,8 @@ model AvailableModel {
   modelId     String   // 网关原始 model id
   name        String   // 显示名称
   ownedBy     String?  // 所属厂商/提供商
-  modelType   String   // 展示分类（7种）: llm | image | video | audio | lipsync | voice_design | other
-  unifiedType String   // 内部路由分类（5种）: llm | image | video | audio | lipsync
+  modelType   String   // 展示分类（7种）: text | image | video | tts | lips_ync | voice_design | other
+  unifiedType String   // 内部路由分类（5种）: text | image | video | tts | lips_ync
   tags        String?  @db.Text // 原始标签 JSON 数组
   enabled     Boolean  @default(true)
   createdAt   DateTime @default(now())

@@ -25,10 +25,10 @@ interface ModelOption {
 }
 
 interface UserModels {
-    llm: ModelOption[]
+    text: ModelOption[]
     image: ModelOption[]
     video: ModelOption[]
-    audio: ModelOption[]
+    tts: ModelOption[]
 }
 
 interface CapabilityFieldDefinition {
@@ -88,7 +88,7 @@ function parseBySample(input: string, sample: CapabilityValue): CapabilityValue 
 
 function extractCapabilityFields(
     capabilities: ModelCapabilities | undefined,
-    namespace: 'llm' | 'image' | 'video' | 'audio',
+    namespace: 'text' | 'image' | 'video' | 'tts',
 ): CapabilityFieldDefinition[] {
     const rawNamespace = capabilities?.[namespace]
     if (!isRecord(rawNamespace)) return []
@@ -153,10 +153,10 @@ export function SettingsModal({
     const t = useTranslations('configModal')
     const [saveStatus, setSaveStatus] = useState<'idle' | 'saved'>('idle')
     const userModels = useMemo<UserModels>(() => ({
-        llm: Array.isArray(availableModels?.llm) ? availableModels.llm : [],
+        text: Array.isArray(availableModels?.text) ? availableModels.text : [],
         image: Array.isArray(availableModels?.image) ? availableModels.image : [],
         video: Array.isArray(availableModels?.video) ? availableModels.video : [],
-        audio: Array.isArray(availableModels?.audio) ? availableModels.audio : [],
+        tts: Array.isArray(availableModels?.tts) ? availableModels.tts : [],
     }), [availableModels])
     const normalVideoModels = useMemo<ModelOption[]>(
         () => filterNormalVideoModelOptions(userModels.video),
@@ -168,12 +168,12 @@ export function SettingsModal({
         [normalVideoModels, videoModel],
     )
     const selectedAnalysisModelOption = useMemo(
-        () => userModels.llm.find((model) => model.value === analysisModel) || null,
-        [userModels.llm, analysisModel],
+        () => userModels.text.find((model) => model.value === analysisModel) || null,
+        [userModels.text, analysisModel],
     )
     const selectedAudioModelOption = useMemo(
-        () => userModels.audio.find((model) => model.value === audioModel) || null,
-        [userModels.audio, audioModel],
+        () => userModels.tts.find((model) => model.value === audioModel) || null,
+        [userModels.tts, audioModel],
     )
 
     const videoCapabilityFields = useMemo(
@@ -181,11 +181,11 @@ export function SettingsModal({
         [selectedVideoModelOption],
     )
     const analysisCapabilityFields = useMemo(
-        () => extractCapabilityFields(selectedAnalysisModelOption?.capabilities, 'llm'),
+        () => extractCapabilityFields(selectedAnalysisModelOption?.capabilities, 'text'),
         [selectedAnalysisModelOption],
     )
     const audioCapabilityFields = useMemo(
-        () => extractCapabilityFields(selectedAudioModelOption?.capabilities, 'audio'),
+        () => extractCapabilityFields(selectedAudioModelOption?.capabilities, 'tts'),
         [selectedAudioModelOption],
     )
     const selectedCharacterModelOption = useMemo(
@@ -276,7 +276,7 @@ export function SettingsModal({
     const handleModelChange = (
         modelKey: string,
         modelOptions: ModelOption[],
-        namespace: 'llm' | 'image' | 'video' | 'audio',
+        namespace: 'text' | 'image' | 'video' | 'tts',
         onModelChangeFn?: (v: string) => void,
     ) => {
         onModelChangeFn?.(modelKey)
@@ -396,7 +396,7 @@ export function SettingsModal({
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-[var(--glass-text-secondary)]">{t('analysisModel')}</label>
                                 <ModelCapabilityDropdown
-                                    models={userModels.llm}
+                                    models={userModels.text}
                                     value={analysisModel}
                                     onModelChange={(v) => handleChange(onAnalysisModelChange)(v)}
                                     capabilityFields={analysisCapabilityFields}
@@ -487,9 +487,9 @@ export function SettingsModal({
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-[var(--glass-text-secondary)]">{t('audioModel')}</label>
                                 <ModelCapabilityDropdown
-                                    models={userModels.audio}
+                                    models={userModels.tts}
                                     value={audioModel}
-                                    onModelChange={(v) => handleModelChange(v, userModels.audio, 'audio', onAudioModelChange)}
+                                    onModelChange={(v) => handleModelChange(v, userModels.tts, 'tts', onAudioModelChange)}
                                     capabilityFields={audioCapabilityFields}
                                     placementMode="downward"
                                     capabilityOverrides={selectedAudioOverrides}

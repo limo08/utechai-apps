@@ -42,7 +42,7 @@
     }
   },
   {
-    "modelType": "llm",
+    "modelType": "text",
     "provider": "example-provider",
     "modelId": "example-llm-model"
   }

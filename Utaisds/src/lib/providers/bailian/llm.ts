@@ -18,7 +18,7 @@ function assertRegistered(modelId: string): void {
   ensureBailianCatalogRegistered()
   assertOfficialModelRegistered({
     provider: 'bailian',
-    modality: 'llm' satisfies OfficialModelModality,
+    modality: 'text' satisfies OfficialModelModality,
     modelId,
   })
 }

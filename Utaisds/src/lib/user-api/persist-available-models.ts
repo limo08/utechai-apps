@@ -14,10 +14,10 @@ import type { UnifiedModelType } from '@/lib/model-config-contract'
  * 另增 other（其他）用于无法归类的模型。
  */
 export type DisplayModelType =
-  | 'llm'           // 文本分析
+  | 'text'          // 文本分析
   | 'image'         // 图像生成
   | 'video'         // 视频生成
-  | 'audio'         // 语音合成
+  | 'tts'           // 语音合成
   | 'lipsync'       // 口型同步
   | 'voice_design'  // 音色设计
   | 'other'         // 其他
@@ -38,29 +38,36 @@ function resolveDisplayModelType(
   unifiedType: UnifiedModelType,
   tags: string[],
 ): DisplayModelType {
-  if (unifiedType === 'audio') {
+  if (unifiedType === 'tts') {
     const hasVoiceDesignTag = tags.some((tag) => {
       const normalized = tag.trim()
       if (!normalized) return false
       return VOICE_DESIGN_TAG_PATTERNS.some((pattern) => pattern.test(normalized))
     })
     if (hasVoiceDesignTag) return 'voice_design'
-    return 'audio'
+    return 'tts'
   }
   // llm → llm, image → image, video → video, lipsync → lipsync
   return unifiedType
 }
 
 /**
- * 构建网关模型的 modelKey（格式: "gateway::modelId"）。
+ * 构建网关模型的 modelKey（格式: "gateway::modelId__type"）。
+ * 同一个模型可以出现在多个类型分组中（如同时是 lipsync 和 voice_design），
+ * 所以 modelKey 需要包含类型信息以避免唯一约束冲突。
+ * 使用 __ 作为类型分隔符，避免与 provider::modelId 的 :: 冲突。
  */
-function composeGatewayModelKey(modelId: string): string {
-  return `gateway::${modelId}`
+function composeGatewayModelKey(modelId: string, type: UnifiedModelType): string {
+  return `gateway::${modelId}__${type}`
 }
 
 /**
  * 将网关模型列表持久化到 AvailableModel 表。
- * 使用 upsert（基于 userId + modelKey 唯一约束）确保幂等性。
+ * 先清除该用户所有旧的网关模型（modelKey 以 "gateway::" 开头），再批量插入新数据，
+ * 确保数据与网关完全一致。
+ *
+ * 注意：同一个模型可能属于多个类型（如同时是 lipsync 和 voice_design），
+ * 所以 modelKey 格式为 "gateway::modelId::type"，以确保唯一性。
  *
  * @param userId 当前用户 ID
  * @param gatewayModels 按 UnifiedModelType 分组的网关模型列表
@@ -69,36 +76,23 @@ export async function persistGatewayModels(
   userId: string,
   gatewayModels: GatewayModelsByType,
 ): Promise<void> {
-  const operations: Array<ReturnType<typeof prisma.availableModel.upsert>> = []
+  // 构建批量创建操作
+  const createOperations: Array<ReturnType<typeof prisma.availableModel.create>> = []
 
   for (const [unifiedType, models] of Object.entries(gatewayModels)) {
     if (!Array.isArray(models)) continue
     const type = unifiedType as UnifiedModelType
 
     for (const model of models) {
-      const modelKey = composeGatewayModelKey(model.id)
+      const modelKey = composeGatewayModelKey(model.id, type)
       const displayType = resolveDisplayModelType(type, model.tags ?? [])
 
-      operations.push(
-        prisma.availableModel.upsert({
-          where: {
-            userId_modelKey: {
-              userId,
-              modelKey,
-            },
-          },
-          create: {
+      createOperations.push(
+        prisma.availableModel.create({
+          data: {
             userId,
             modelKey,
             modelId: model.id,
-            name: model.name || model.id,
-            ownedBy: model.ownedBy || null,
-            modelType: displayType,
-            unifiedType: type,
-            tags: JSON.stringify(model.tags ?? []),
-            enabled: true,
-          },
-          update: {
             name: model.name || model.id,
             ownedBy: model.ownedBy || null,
             modelType: displayType,
@@ -111,7 +105,16 @@ export async function persistGatewayModels(
     }
   }
 
-  if (operations.length > 0) {
-    await prisma.$transaction(operations)
-  }
+  // 事务：先删除旧的网关模型，再批量插入新的
+  await prisma.$transaction([
+    // 删除所有 gateway:: 前缀的旧模型
+    prisma.availableModel.deleteMany({
+      where: {
+        userId,
+        modelKey: { startsWith: 'gateway::' },
+      },
+    }),
+    // 批量插入新模型
+    ...createOperations,
+  ])
 }

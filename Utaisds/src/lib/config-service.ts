@@ -189,7 +189,7 @@ export async function getUserModelConfig(userId: string): Promise<UserModelConfi
 }
 
 export function resolveModelCapabilityGenerationOptions(input: {
-  modelType: 'llm' | 'image' | 'video'
+  modelType: 'text' | 'image' | 'video'
   modelKey: string
   capabilityDefaults?: CapabilitySelections
   capabilityOverrides?: CapabilitySelections
@@ -208,7 +208,7 @@ export function resolveModelCapabilityGenerationOptions(input: {
     capabilityDefaults: input.capabilityDefaults,
     capabilityOverrides: input.capabilityOverrides,
     runtimeSelections: input.runtimeSelections,
-    requireAllFields: input.modelType !== 'llm',
+    requireAllFields: input.modelType !== 'text',
   })
 
   if (resolved.issues.length > 0) {
@@ -222,7 +222,7 @@ export function resolveModelCapabilityGenerationOptions(input: {
 export async function resolveProjectModelCapabilityGenerationOptions(input: {
   projectId: string
   userId: string
-  modelType: 'llm' | 'image' | 'video'
+  modelType: 'text' | 'image' | 'video'
   modelKey: string
   runtimeSelections?: Record<string, CapabilityValue>
 }): Promise<Record<string, CapabilityValue>> {

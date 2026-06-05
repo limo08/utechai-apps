@@ -2,7 +2,7 @@ import { registerOfficialModel } from '@/lib/providers/official/model-registry'
 import type { OfficialModelModality } from '@/lib/providers/official/model-registry'
 
 const BAILIAN_CATALOG: Readonly<Record<OfficialModelModality, readonly string[]>> = {
-  llm: [
+  text: [
     'qwen3.5-plus',
     'qwen3.5-flash',
   ],
@@ -16,7 +16,7 @@ const BAILIAN_CATALOG: Readonly<Record<OfficialModelModality, readonly string[]>
     'wan2.2-kf2v-flash',
     'wanx2.1-kf2v-plus',
   ],
-  audio: [
+  tts: [
     'qwen3-tts-vd-2026-01-26',
   ],
 }

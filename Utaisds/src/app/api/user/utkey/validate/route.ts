@@ -146,38 +146,75 @@ export const POST = apiHandler(async (request) => {
 
 /**
  * 将模型标签（tags）映射为系统统一模型类型（UnifiedModelType）。
- * 支持中文和英文标签，按优先级匹配第一个命中的标签。
+ * 同时支持网关实际返回的英文标签（Vision, Audio, Reasoning 等）
+ * 和中文标签（图片生成, 视频生成 等）。
+ *
+ * 注意：一个模型可以同时匹配多个类型（如同时为 lipsync + voice_design）。
+ * voice_design 排在 tts 前面，避免被 /voice/i 提前匹配到 tts。
  */
 const TAG_TO_MODEL_TYPE: Array<{ patterns: RegExp[]; type: UnifiedModelType }> = [
-  {
-    patterns: [/文本分析/i, /text.?analysis/i, /llm/i, /文本生成/i, /text.?gen/i, /对话/i, /chat/i, /大语言/i, /语言模型/i, /language.?model/i],
-    type: 'llm',
-  },
   {
     patterns: [/视频生成/i, /视频/i, /video/i, /video.?gen/i],
     type: 'video',
   },
   {
-    patterns: [/图片生成/i, /图像生成/i, /图片/i, /图像/i, /image/i, /image.?gen/i],
+    patterns: [/图片生成/i, /图像生成/i, /图片/i, /图像/i, /image/i, /image.?gen/i, /Vision/i],
     type: 'image',
   },
   {
-    patterns: [/音频生成/i, /音频/i, /语音合成/i, /语音/i, /TTS/i, /audio/i, /speech/i, /voice/i],
-    type: 'audio',
+    patterns: [/音色设计/i, /voice.?design/i, /声音设计/i, /sound.?design/i],
+    type: 'voice_design',
+  },
+  {
+    patterns: [/音频生成/i, /音频/i, /语音合成/i, /语音/i, /TTS/i, /audio/i, /speech/i],
+    type: 'tts',
   },
   {
     patterns: [/口型同步/i, /唇形同步/i, /口型/i, /lipsync/i, /lip.?sync/i],
     type: 'lipsync',
   },
+  {
+    patterns: [/Reasoning/i, /文本分析/i, /text.?analysis/i, /llm/i, /文本生成/i, /text.?gen/i, /对话/i, /chat/i, /大语言/i, /语言模型/i, /language.?model/i],
+    type: 'text',
+  },
 ]
 
-function resolveModelTypeFromTags(tags: string[]): UnifiedModelType | null {
+/**
+ * 返回 tags 匹配到的所有模型类型（一个模型可属于多个类型）。
+ */
+function resolveModelTypesFromTags(tags: string[]): UnifiedModelType[] {
+  const matched = new Set<UnifiedModelType>()
   for (const tag of tags) {
     const normalizedTag = tag.trim()
     if (!normalizedTag) continue
     for (const rule of TAG_TO_MODEL_TYPE) {
+      if (matched.has(rule.type)) continue
       for (const pattern of rule.patterns) {
-        if (pattern.test(normalizedTag)) return rule.type
+        if (pattern.test(normalizedTag)) {
+          matched.add(rule.type)
+          break
+        }
+      }
+    }
+  }
+  return [...matched]
+}
+
+function resolveModelTypeFromTags(tags: string[]): UnifiedModelType | null {
+  const types = resolveModelTypesFromTags(tags)
+  return types.length > 0 ? types[0] : null
+}
+
+/**
+ * 当模型没有 tags 时，根据模型 id / name 推断类型。
+ * /v1/models（OpenAI 兼容格式）通常不返回 tags，需要此兜底逻辑。
+ */
+function resolveModelTypeFromIdOrName(modelId: string, modelName?: string): UnifiedModelType | null {
+  const candidates = [modelId, modelName].filter((s): s is string => !!s)
+  for (const candidate of candidates) {
+    for (const rule of TAG_TO_MODEL_TYPE) {
+      for (const pattern of rule.patterns) {
+        if (pattern.test(candidate)) return rule.type
       }
     }
   }
@@ -185,8 +222,10 @@ function resolveModelTypeFromTags(tags: string[]): UnifiedModelType | null {
 }
 
 /**
- * 将网关原始模型列表去重并按 tags 映射到 UnifiedModelType 分组。
- * 没有可识别 tag 的模型将被忽略（不参与下拉框展示）。
+ * 将网关原始模型列表按 tags 映射到 UnifiedModelType 分组。
+ * 一个模型可以属于多个类型（如同时为 lipsync + voice_design）。
+ * 优先用 tags 判断类型；tags 为空时 fallback 到 id/name 推断。
+ * 仍无法归类的模型默认归为 text（绝大多数模型为 LLM）。
  */
 function groupGatewayModelsByTag(
   rawModels: Array<{ id: string; name?: string; owned_by?: string; tags?: string[] }>,
@@ -199,24 +238,30 @@ function groupGatewayModelsByTag(
     if (!modelId || seen.has(modelId)) continue
     seen.add(modelId)
 
+    const name = (typeof raw.name === 'string' && raw.name.trim()) || modelId
     const tags = Array.isArray(raw.tags)
       ? raw.tags.filter((t): t is string => typeof t === 'string' && t.trim().length > 0)
       : []
-    if (tags.length === 0) continue
 
-    const type = resolveModelTypeFromTags(tags)
-    if (!type) continue
-
-    const option: GatewayModelOption = {
-      id: modelId,
-      name: (typeof raw.name === 'string' && raw.name.trim()) || modelId,
-      ownedBy: typeof raw.owned_by === 'string' ? raw.owned_by.trim() : undefined,
-      type,
-      tags,
+    // 优先用 tags 判断（可匹配多个类型），fallback 到 id/name 推断（单个类型），最终默认 text
+    let types = resolveModelTypesFromTags(tags)
+    if (types.length === 0) {
+      const fallbackType = resolveModelTypeFromIdOrName(modelId, name) || 'text'
+      types = [fallbackType]
     }
 
-    if (!grouped[type]) grouped[type] = []
-    grouped[type]!.push(option)
+    for (const type of types) {
+      const option: GatewayModelOption = {
+        id: modelId,
+        name,
+        ownedBy: typeof raw.owned_by === 'string' ? raw.owned_by.trim() : undefined,
+        type,
+        tags,
+      }
+
+      if (!grouped[type]) grouped[type] = []
+      grouped[type]!.push(option)
+    }
   }
 
   return grouped

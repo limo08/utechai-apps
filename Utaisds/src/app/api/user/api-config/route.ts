@@ -154,16 +154,17 @@ const DEFAULT_MODEL_FIELDS: DefaultModelField[] = [
 const CAPABILITY_MODEL_TYPES: readonly UnifiedModelType[] = [
   'image',
   'video',
-  'llm',
-  'audio',
+  'text',
+  'tts',
   'lipsync',
 ]
 const BILLABLE_MODEL_TYPE_TO_PRICING_API_TYPE: Readonly<Record<UnifiedModelType, PricingApiType | null>> = {
-  llm: 'text',
+'text': 'text',
   image: 'image',
   video: 'video',
-  audio: 'voice',
+  tts: 'voice',
   lipsync: 'lip-sync',
+  voice_design: 'voice',
 }
 const DEFAULT_FIELD_TO_PRICING_API_TYPE: Readonly<Record<DefaultModelField, 'text' | 'image' | 'video' | 'voice' | 'lip-sync'>> = {
   analysisModel: 'text',
@@ -239,10 +240,10 @@ function formatPriceAmount(amount: number): string {
 }
 
 function pricingApiTypeToModelType(apiType: PricingApiType): UnifiedModelType | null {
-  if (apiType === 'text') return 'llm'
+  if (apiType === 'text') return 'text'
   if (apiType === 'image') return 'image'
   if (apiType === 'video') return 'video'
-  if (apiType === 'voice') return 'audio'
+  if (apiType === 'voice') return 'tts'
   if (apiType === 'lip-sync') return 'lipsync'
   return null
 }
@@ -452,11 +453,12 @@ function getProviderKey(providerId: string): string {
 
 function isUnifiedModelType(value: unknown): value is UnifiedModelType {
   return (
-    value === 'llm'
+    value === 'text'
     || value === 'image'
     || value === 'video'
-    || value === 'audio'
+    || value === 'tts'
     || value === 'lipsync'
+    || value === 'voice_design'
   )
 }
 
@@ -678,7 +680,7 @@ function normalizeCustomPricing(
     return undefined
   }
   if (options?.strict) {
-    validateAllowedObjectKeys(raw, ['llm', 'image', 'video', 'input', 'output'], options.field || 'models.customPricing')
+    validateAllowedObjectKeys(raw, ['text', 'image', 'video', 'input', 'output'], options.field || 'models.customPricing')
   }
 
   const llmRaw = isRecord(raw.llm) ? raw.llm : raw
@@ -978,7 +980,7 @@ function validateModelProviderTypeSupport(models: StoredModel[], providers: Stor
 }
 
 function isOpenAICompatibleLlmModel(model: StoredModel): boolean {
-  return model.type === 'llm' && getProviderKey(model.provider) === 'openai-compatible'
+  return model.type === 'text' && getProviderKey(model.provider) === 'openai-compatible'
 }
 
 function isOpenAICompatibleMediaTemplateModel(model: StoredModel): boolean {
@@ -1201,7 +1203,7 @@ function hasBuiltinPricingForModel(apiType: PricingApiType, provider: string, mo
 
 function hasCustomPricingForType(model: StoredModel): boolean {
   if (!model.customPricing) return false
-  if (model.type === 'llm') {
+  if (model.type === 'text') {
     return (
       typeof model.customPricing.llm?.inputPerMillion === 'number'
       && typeof model.customPricing.llm?.outputPerMillion === 'number'
@@ -1707,9 +1709,9 @@ export const GET = apiHandler(async () => {
   // 对每个 gemini-compatible provider，注入尚未保存过的 Google preset 模型（disabled，带完整 capabilities）
   // gemini-compatible 本质就是改了 baseURL 和 key，模型和能力与 Google 官方完全一致
   const GEMINI_COMPATIBLE_PRESETS: { type: UnifiedModelType; modelId: string; name: string }[] = [
-    { type: 'llm', modelId: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro' },
-    { type: 'llm', modelId: 'gemini-3-flash-preview', name: 'Gemini 3 Flash' },
-    { type: 'llm', modelId: 'gemini-3.1-flash-lite-preview', name: 'Gemini 3.1 Flash-Lite' },
+    { type: 'text', modelId: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro' },
+    { type: 'text', modelId: 'gemini-3-flash-preview', name: 'Gemini 3 Flash' },
+    { type: 'text', modelId: 'gemini-3.1-flash-lite-preview', name: 'Gemini 3.1 Flash-Lite' },
     { type: 'image', modelId: 'gemini-3-pro-image-preview', name: 'Banana Pro' },
     { type: 'image', modelId: 'gemini-3.1-flash-image-preview', name: 'Nano Banana 2' },
     { type: 'image', modelId: 'gemini-2.5-flash-image', name: 'Gemini 2.5 Flash Image' },

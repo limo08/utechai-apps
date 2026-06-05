@@ -10,7 +10,7 @@ describe('api-config minimax preset', () => {
 
   it('includes all required minimax official llm preset models', () => {
     const minimaxLlmModelIds = PRESET_MODELS
-      .filter((model) => model.provider === 'minimax' && model.type === 'llm')
+      .filter((model) => model.provider === 'minimax' && model.type === 'text')
       .map((model) => model.modelId)
 
     expect(minimaxLlmModelIds).toContain('MiniMax-M2.5')

@@ -2,10 +2,10 @@ import { registerOfficialModel } from '@/lib/providers/official/model-registry'
 import type { OfficialModelModality } from '@/lib/providers/official/model-registry'
 
 const SILICONFLOW_CATALOG: Readonly<Record<OfficialModelModality, readonly string[]>> = {
-  llm: [],
+  text: [],
   image: [],
   video: [],
-  audio: [],
+  tts: [],
 }
 
 let initialized = false

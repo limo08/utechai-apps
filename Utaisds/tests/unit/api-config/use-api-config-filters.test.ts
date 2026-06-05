@@ -26,7 +26,7 @@ describe('api config filters', () => {
         modelId: 'fal-ai/index-tts-2/text-to-speech',
         modelKey: 'fal::fal-ai/index-tts-2/text-to-speech',
         name: 'IndexTTS 2',
-        type: 'audio',
+        type: 'tts',
         provider: 'fal',
         price: 0,
         enabled: true,
@@ -35,7 +35,7 @@ describe('api config filters', () => {
         modelId: 'qwen3-tts-vd-2026-01-26',
         modelKey: 'bailian::qwen3-tts-vd-2026-01-26',
         name: 'Qwen3 TTS',
-        type: 'audio',
+        type: 'tts',
         provider: 'bailian',
         price: 0,
         enabled: true,
@@ -44,7 +44,7 @@ describe('api config filters', () => {
         modelId: 'qwen-voice-design',
         modelKey: 'bailian::qwen-voice-design',
         name: 'Qwen Voice Design',
-        type: 'audio',
+        type: 'tts',
         provider: 'bailian',
         price: 0,
         enabled: true,
@@ -53,7 +53,7 @@ describe('api config filters', () => {
         modelId: 'qwen3.5-flash',
         modelKey: 'bailian::qwen3.5-flash',
         name: 'Qwen 3.5 Flash',
-        type: 'llm',
+        type: 'text',
         provider: 'bailian',
         price: 0,
         enabled: true,
@@ -62,7 +62,7 @@ describe('api config filters', () => {
 
     const result = useApiConfigFilters({ providers, models })
     const providerIds = result.modelProviders.map((provider) => provider.id)
-    const audioDefaultIds = result.getEnabledModelsByType('audio').map((model) => model.modelId)
+    const audioDefaultIds = result.getEnabledModelsByType('tts').map((model) => model.modelId)
 
     expect(providerIds).toEqual(['fal', 'bailian'])
     expect(audioDefaultIds).toEqual(expect.arrayContaining([
@@ -84,7 +84,7 @@ describe('api config filters', () => {
         modelId: 'gemini-3.1-pro-preview',
         modelKey: 'google::gemini-3.1-pro-preview',
         name: 'Gemini 3.1 Pro',
-        type: 'llm',
+        type: 'text',
         provider: 'google',
         price: 0,
         enabled: true,
@@ -93,7 +93,7 @@ describe('api config filters', () => {
         modelId: 'gpt-4.1',
         modelKey: 'openai-compatible:oa-2::gpt-4.1',
         name: 'GPT 4.1',
-        type: 'llm',
+        type: 'text',
         provider: 'openai-compatible:oa-2',
         price: 0,
         enabled: true,
@@ -102,7 +102,7 @@ describe('api config filters', () => {
         modelId: 'doubao-seed-2-0-pro-260215',
         modelKey: 'ark::doubao-seed-2-0-pro-260215',
         name: 'Doubao Seed 2.0 Pro',
-        type: 'llm',
+        type: 'text',
         provider: 'ark',
         price: 0,
         enabled: true,

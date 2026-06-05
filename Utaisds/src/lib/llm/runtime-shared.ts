@@ -148,7 +148,7 @@ export async function resolveLlmRuntimeModel(
   userId: string,
   model: string,
 ): Promise<ResolvedLlmRuntimeModel> {
-  const selection = await resolveModelSelection(userId, model, 'llm')
+  const selection = await resolveModelSelection(userId, model, 'text')
   return {
     provider: selection.provider,
     modelId: selection.modelId,

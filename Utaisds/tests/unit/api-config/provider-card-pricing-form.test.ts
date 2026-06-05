@@ -11,7 +11,7 @@ import {
 
 describe('provider card pricing form behavior', () => {
   it('allows openai-compatible provider to add llm/image/video', () => {
-    expect(getAddableModelTypesForProvider('openai-compatible:oa-1')).toEqual(['llm', 'image', 'video'])
+    expect(getAddableModelTypesForProvider('openai-compatible:oa-1')).toEqual(['text', 'image', 'video'])
   })
 
   it('shows llm/image/video tabs by default for openai-compatible even with only image models', () => {
@@ -32,7 +32,7 @@ describe('provider card pricing form behavior', () => {
       },
     )
 
-    expect(visible).toEqual(['llm', 'image', 'video'])
+    expect(visible).toEqual(['text', 'image', 'video'])
   })
 
   it('shows the openai-compatible video hint only for openai-compatible video add forms', () => {
@@ -59,7 +59,7 @@ describe('provider card pricing form behavior', () => {
 
   it('builds llm customPricing payload when pricing toggle is on', () => {
     const result = buildCustomPricingFromModelForm(
-      'llm',
+      'text',
       {
         name: 'GPT',
         modelId: 'gpt-4.1',

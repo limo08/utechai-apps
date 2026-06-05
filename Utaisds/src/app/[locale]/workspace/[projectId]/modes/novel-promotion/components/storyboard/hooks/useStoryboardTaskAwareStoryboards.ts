@@ -74,7 +74,7 @@ function buildPanelTargets(storyboards: NovelPromotionStoryboard[], type: 'image
           key: `panel-lip:${panel.id}`,
           targetType: 'NovelPromotionPanel',
           targetId: panel.id,
-          types: ['lip_sync'],
+          types: ['lipsync'],
           resource: 'video',
           hasOutput: !!panel.lipSyncVideoUrl,
         })

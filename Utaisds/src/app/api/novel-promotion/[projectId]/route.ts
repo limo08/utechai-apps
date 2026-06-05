@@ -26,16 +26,16 @@ const MODEL_FIELDS = [
 ] as const
 
 const MODEL_FIELD_TO_TYPE: Record<typeof MODEL_FIELDS[number], UnifiedModelType> = {
-  analysisModel: 'llm',
+  analysisModel: 'text',
   characterModel: 'image',
   locationModel: 'image',
   storyboardModel: 'image',
   editModel: 'image',
   videoModel: 'video',
-  audioModel: 'audio',
+  audioModel: 'tts',
 }
 
-const CAPABILITY_MODEL_TYPES: readonly UnifiedModelType[] = ['image', 'video', 'llm', 'audio', 'lipsync']
+const CAPABILITY_MODEL_TYPES: readonly UnifiedModelType[] = ['image', 'video', 'text', 'tts', 'lipsync']
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value)

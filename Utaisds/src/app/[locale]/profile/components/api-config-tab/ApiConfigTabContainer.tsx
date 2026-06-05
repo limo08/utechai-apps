@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState, useEffect, useRef } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { resolveTaskPresentationState } from '@/lib/task/presentation'
 import type { CapabilityValue } from '@/lib/model-config-contract'
@@ -17,6 +17,7 @@ import { DefaultModelCards } from './DefaultModelCards'
 import { useApiConfigFilters } from './hooks/useApiConfigFilters'
 import { AppIcon } from '@/components/ui/icons'
 import type { GatewayModelsByType } from '@/lib/user-api/gateway-models'
+import { TTS_RATES } from '@/lib/constants'
 
 // TODO: UT-KEY 统一模型网关上线后移除以下类型和状态
 // type TestStepStatus = 'pass' | 'fail' | 'skip'
@@ -91,17 +92,18 @@ export function ApiConfigTabContainer() {
   const gatewayModelOptionsByType = useMemo(() => {
     const result: Record<string, Array<{ modelKey: string; name: string; provider: string; providerName: string }>> = {}
     const typeMap: Record<string, string> = {
-      llm: 'llm',
+      text: 'text',
       image: 'image',
       video: 'video',
-      audio: 'audio',
+      tts: 'tts',
       lipsync: 'lipsync',
+      voice_design: 'voice_design',
     }
     for (const [type, models] of Object.entries(gatewayModels)) {
       const normalizedType = typeMap[type]
       if (!normalizedType || !Array.isArray(models)) continue
       result[normalizedType] = models.map((m) => ({
-        modelKey: `gateway::${m.id}`,
+        modelKey: `gateway::${m.id}__${type}`,
         name: m.name || m.id,
         provider: 'gateway',
         providerName: m.ownedBy || 'Model Gateway',
@@ -122,6 +124,7 @@ export function ApiConfigTabContainer() {
     availableModels,
     loading,
     saveStatus,
+    refreshAvailableModels,
     // flushConfig,           // TODO: UT-KEY 上线后恢复
     // updateProviderHidden,  // TODO: UT-KEY 上线后恢复
     // updateProviderApiKey,  // TODO: UT-KEY 上线后恢复
@@ -184,26 +187,63 @@ export function ApiConfigTabContainer() {
 
   // 同步模型状态和处理函数
   const [isSyncingModels, setIsSyncingModels] = useState(false)
+  const [syncResult, setSyncResult] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+  const syncResultTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // 自动清除同步结果提示
+  useEffect(() => {
+    if (syncResult) {
+      if (syncResultTimerRef.current) {
+        clearTimeout(syncResultTimerRef.current)
+      }
+      syncResultTimerRef.current = setTimeout(() => {
+        setSyncResult(null)
+      }, 4000)
+    }
+    return () => {
+      if (syncResultTimerRef.current) {
+        clearTimeout(syncResultTimerRef.current)
+      }
+    }
+  }, [syncResult])
 
   const handleSyncModels = useCallback(async () => {
     if (isSyncingModels) return
     setIsSyncingModels(true)
+    setSyncResult(null)
     try {
       const res = await fetch('/api/user/utkey/sync-models', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       })
       const data = await res.json()
+      console.log('[sync-models] 前端接收到的响应:', data)
       if (data.success) {
-        // 同步成功后重新加载配置以更新下拉框
-        window.location.reload()
+        // 更新网关模型列表，使下拉框立即可用
+        if (data.gatewayModels) {
+          console.log('[sync-models] 设置 gatewayModels:', data.gatewayModels)
+          setGatewayModels(data.gatewayModels)
+        } else {
+          console.warn('[sync-models] 响应中没有 gatewayModels 字段')
+        }
+        // 刷新数据库中的可用模型列表（持久化后重新加载）
+        await refreshAvailableModels()
+        setSyncResult({
+          type: 'success',
+          message: data.message || `成功同步 ${data.modelCount || 0} 个模型`,
+        })
       } else {
-        console.error('[sync-models] 同步失败:', data.message)
-        alert(data.message || '模型同步失败')
+        setSyncResult({
+          type: 'error',
+          message: data.message || '模型同步失败',
+        })
       }
     } catch (error) {
       console.error('[sync-models] 同步请求失败:', error)
-      alert('模型同步请求失败，请稍后重试')
+      setSyncResult({
+        type: 'error',
+        message: '模型同步请求失败，请稍后重试',
+      })
     } finally {
       setIsSyncingModels(false)
     }
@@ -270,6 +310,8 @@ export function ApiConfigTabContainer() {
             gatewayModelOptions={gatewayModelOptionsByType}
             onSyncModels={handleSyncModels}
             isSyncingModels={isSyncingModels}
+            utKeyConfigured={utKeyConfigured}
+            syncResult={syncResult}
           />
 
           {/* TODO: UT-KEY 统一模型网关上线后恢复厂商资源池

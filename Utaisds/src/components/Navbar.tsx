@@ -8,6 +8,7 @@ import LanguageSwitcher from './LanguageSwitcher'
 import ThemeToggle from './ThemeToggle'
 import { AppIcon } from '@/components/ui/icons'
 import { Link } from '@/i18n/navigation'
+import SmartLink from '@/components/ui/SmartLink'
 import { buildAuthenticatedHomeTarget } from '@/lib/home/default-route'
 
 export default function Navbar() {
@@ -48,20 +49,20 @@ export default function Navbar() {
             </Link>
             {session && (
               <div className="flex items-center gap-1 ml-2">
-                <Link
+                <SmartLink
                   href={{ pathname: '/workspace' }}
                   className="text-lg text-[var(--glass-text-secondary)] hover:text-[var(--glass-text-primary)] font-medium transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-[var(--glass-bg-muted)]"
                 >
                   <AppIcon name="monitor" className="w-[18px] h-[18px]" />
                   {t('workspace')}
-                </Link>
-                <Link
+                </SmartLink>
+                <SmartLink
                   href={{ pathname: '/workspace/asset-hub' }}
                   className="text-lg text-[var(--glass-text-secondary)] hover:text-[var(--glass-text-primary)] font-medium transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-[var(--glass-bg-muted)]"
                 >
                   <AppIcon name="folderHeart" className="w-[18px] h-[18px]" />
                   {t('assetHub')}
-                </Link>
+                </SmartLink>
               </div>
             )}
           </div>
@@ -91,14 +92,14 @@ export default function Navbar() {
                   </button>
                   {menuOpen && (
                     <div className="glass-surface-modal absolute right-0 z-50 mt-2 w-48 rounded-xl p-1.5 animate-scale-in">
-                      <Link
+                      <SmartLink
                         href={{ pathname: '/profile' }}
                         onClick={() => setMenuOpen(false)}
                         className="w-full rounded-lg px-3 py-2.5 text-left text-base transition-colors flex items-center gap-2 text-[var(--glass-text-secondary)] hover:bg-[var(--glass-bg-muted)] hover:text-[var(--glass-text-primary)]"
                       >
                         <AppIcon name="settingsHex" className="w-[18px] h-[18px]" />
                         {t('profile')}
-                      </Link>
+                      </SmartLink>
                       <button
                         type="button"
                         onClick={() => { setMenuOpen(false); signOut({ callbackUrl: '/' }) }}
@@ -117,16 +118,16 @@ export default function Navbar() {
                 <ThemeToggle />
                 <Link
                   href={{ pathname: '/auth/signin' }}
-                  className="text-base text-[var(--glass-text-secondary)] hover:text-[var(--glass-text-primary)] font-medium transition-colors"
+                  className="glass-btn-base glass-btn-primary px-4 py-2 text-base font-medium"
                 >
                   {t('signin')}
                 </Link>
-                <Link
+                {/* <Link
                   href={{ pathname: '/auth/signup' }}
                   className="glass-btn-base glass-btn-primary px-4 py-2 text-base font-medium"
                 >
                   {t('signup')}
-                </Link>
+                </Link> */}
               </>
             )}
           </div>
