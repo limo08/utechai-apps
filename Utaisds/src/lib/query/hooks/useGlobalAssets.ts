@@ -19,6 +19,7 @@ export interface GlobalCharacterAppearance {
     imageUrl: string | null
     media?: MediaRef | null
     imageUrls: string[]
+    renderIndices: number[]  // 每个 imageUrl 对应的 render.index
     imageMedias?: MediaRef[]
     selectedIndex: number | null
     previousImageUrl: string | null
@@ -121,6 +122,7 @@ export function useGlobalCharacters(folderId?: string | null) {
                     ?? variant.renders[0]?.media
                     ?? null,
                 imageUrls: variant.renders.map((render) => render.imageUrl).filter((imageUrl): imageUrl is string => !!imageUrl),
+                renderIndices: variant.renders.filter((render) => !!render.imageUrl).map((render) => render.index),
                 imageMedias: variant.renders.map((render) => render.media).filter((media): media is MediaRef => !!media),
                 selectedIndex: variant.selectionState.selectedRenderIndex,
                 previousImageUrl: variant.renders[0]?.previousImageUrl ?? null,

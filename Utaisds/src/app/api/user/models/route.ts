@@ -52,6 +52,9 @@ interface UserModelsPayload {
   tts: UserModelOption[]
   lipsync: UserModelOption[]
   voice_design: UserModelOption[]
+  defaults?: {
+    videoModel?: string
+  }
 }
 
 const AUDIO_MODEL_EXCLUDED_IDS = new Set([
@@ -171,10 +174,16 @@ export const GET = apiHandler(async () => {
   const { session } = authResult
   const userId = session.user.id
 
-  const pref = await prisma.userPreference.findUnique({
-    where: { userId },
-    select: { customModels: true, customProviders: true },
-  })
+  const [pref, gatewayModels] = await Promise.all([
+    prisma.userPreference.findUnique({
+      where: { userId },
+      select: { customModels: true, customProviders: true, videoModel: true },
+    }),
+    prisma.availableModel.findMany({
+      where: { userId, enabled: true },
+      select: { modelKey: true, modelId: true, name: true, ownedBy: true, unifiedType: true },
+    }),
+  ])
 
   const modelsRaw: StoredModel[] = parseStoredModels(pref?.customModels)
   const providers: StoredProvider[] = parseStoredProviders(pref?.customProviders)
@@ -235,6 +244,22 @@ export const GET = apiHandler(async () => {
     grouped[modelType].push(option)
   }
 
+  // 合并网关同步模型（available_models 表）
+  for (const gwModel of gatewayModels) {
+    const modelType = gwModel.unifiedType
+    if (!isUnifiedModelType(modelType)) continue
+    if (!isUserSelectableModel({ type: modelType, modelId: gwModel.modelId })) continue
+
+    const option: UserModelOption = {
+      value: gwModel.modelKey,
+      label: gwModel.name,
+      provider: 'gateway',
+      providerName: gwModel.ownedBy || undefined,
+    }
+
+    grouped[modelType].push(option)
+  }
+
   return NextResponse.json({
     text: dedupeByModelKey(grouped.text),
     image: dedupeByModelKey(grouped.image),
@@ -242,5 +267,8 @@ export const GET = apiHandler(async () => {
     tts: dedupeByModelKey(grouped.tts),
     lipsync: dedupeByModelKey(grouped.lipsync),
     voice_design: dedupeByModelKey(grouped.voice_design),
+    defaults: {
+      videoModel: pref?.videoModel || '',
+    },
   } satisfies UserModelsPayload)
 })

@@ -1,4 +1,4 @@
-type ProviderApiMode = 'gemini-sdk' | 'openai-official' | undefined
+type ProviderApiMode = 'openai-official' | 'gemini-sdk' | undefined
 
 function normalizeModelId(modelId: string): string {
   return modelId.trim().toLowerCase()

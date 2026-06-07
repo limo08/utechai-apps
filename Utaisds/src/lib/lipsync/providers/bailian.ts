@@ -4,8 +4,28 @@ import { normalizeToOriginalMediaUrl } from '@/lib/media/outbound-image'
 import { toFetchableUrl } from '@/lib/storage/utils'
 import type { LipSyncParams, LipSyncResult, LipSyncSubmitContext } from '@/lib/lipsync/types'
 
-const BAILIAN_LIPSYNC_ENDPOINT = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/image2video/video-synthesis'
-const BAILIAN_UPLOAD_POLICY_ENDPOINT = 'https://dashscope.aliyuncs.com/api/v1/uploads'
+// 网关基础 URL 处理函数
+function resolveGatewayBaseUrl(baseUrl?: string): string | undefined {
+  if (!baseUrl) return undefined
+  return baseUrl.replace(/\/v1\/?$/, '')
+}
+
+function resolveLipsyncEndpoint(baseUrl?: string): string {
+  const gatewayBaseUrl = resolveGatewayBaseUrl(baseUrl)
+  if (gatewayBaseUrl) {
+    return `${gatewayBaseUrl}/api/v1/services/aigc/image2video/video-synthesis`
+  }
+  return 'https://dashscope.aliyuncs.com/api/v1/services/aigc/image2video/video-synthesis'
+}
+
+function resolveUploadPolicyEndpoint(baseUrl?: string): string {
+  const gatewayBaseUrl = resolveGatewayBaseUrl(baseUrl)
+  if (gatewayBaseUrl) {
+    return `${gatewayBaseUrl}/api/v1/uploads`
+  }
+  return 'https://dashscope.aliyuncs.com/api/v1/uploads'
+}
+
 const BAILIAN_OSS_RESOLVE_VALUE = 'enable'
 
 type LipSyncInputType = 'video' | 'audio'
@@ -207,9 +227,10 @@ function resolveBailianUploadPolicy(data: BailianUploadPolicyResponse): BailianU
   }
 }
 
-async function getBailianUploadPolicy(apiKey: string, modelId: string): Promise<BailianUploadPolicy> {
+async function getBailianUploadPolicy(apiKey: string, modelId: string, baseUrl?: string): Promise<BailianUploadPolicy> {
+  const uploadPolicyEndpoint = resolveUploadPolicyEndpoint(baseUrl)
   const response = await fetch(
-    `${BAILIAN_UPLOAD_POLICY_ENDPOINT}?action=getPolicy&model=${encodeURIComponent(modelId)}`,
+    `${uploadPolicyEndpoint}?action=getPolicy&model=${encodeURIComponent(modelId)}`,
     {
       method: 'GET',
       headers: {
@@ -284,8 +305,11 @@ export async function submitBailianLipSync(
     throw new Error(`LIPSYNC_ENDPOINT_MISSING: ${context.modelKey}`)
   }
 
-  const { apiKey } = await getProviderConfig(context.userId, context.providerId)
-  const policy = await getBailianUploadPolicy(apiKey, modelId)
+  // 通过网关调用
+  const providerConfig = await getProviderConfig(context.userId, context.providerId)
+  const apiKey = providerConfig.apiKey
+  const baseUrl = providerConfig.baseUrl
+  const policy = await getBailianUploadPolicy(apiKey, modelId, baseUrl)
   const [videoAsset, audioAsset] = await Promise.all([
     resolveLipSyncInputAsset(params.videoUrl, 'video'),
     resolveLipSyncInputAsset(params.audioUrl, 'audio'),
@@ -295,7 +319,8 @@ export async function submitBailianLipSync(
     uploadToBailianTempStorage(policy, audioAsset),
   ])
 
-  const response = await fetch(BAILIAN_LIPSYNC_ENDPOINT, {
+  const lipsyncEndpoint = resolveLipsyncEndpoint(baseUrl)
+  const response = await fetch(lipsyncEndpoint, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,

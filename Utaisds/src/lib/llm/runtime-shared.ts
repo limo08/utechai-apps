@@ -36,6 +36,10 @@ export function completionUsageSummary(
   }
 }
 
+/**
+ * 记录LLM原始输入参数
+ * @param params 输入参数
+ */
 export function logLlmRawInput(params: {
   userId: string
   projectId?: string
@@ -73,6 +77,10 @@ export function logLlmRawInput(params: {
   })
 }
 
+/** 
+ * 记录LLM原始输出参数
+ * @param params 输出参数
+ */
 export function logLlmRawOutput(params: {
   userId: string
   projectId?: string
@@ -116,6 +124,11 @@ export function logLlmRawOutput(params: {
   }
 }
 
+/**
+ * 判断是否为可试错误
+ * @param error 错误对象
+ * @returns 是否为可试错误
+ */
 export function isRetryableError(error: unknown): boolean {
   if (!error || typeof error !== 'object') return false
   const errorRecord = error as { code?: unknown; status?: unknown }
@@ -126,6 +139,11 @@ export function isRetryableError(error: unknown): boolean {
   return false
 }
 
+/**
+ * 记录LLM调用的文本使用量
+ * @param model 模型ID
+ * @param completion 完成结果
+ */
 export function recordCompletionUsage(model: string, completion: OpenAI.Chat.Completions.ChatCompletion) {
   const summary = completionUsageSummary(completion)
   if (!summary) return
@@ -137,6 +155,12 @@ export function recordCompletionUsage(model: string, completion: OpenAI.Chat.Com
   })
 }
 
+/** 
+ * 解析LLM运行时模型选择
+ * @param userId 用户ID
+ * @param model 模型ID
+ * @returns 解析后的模型选择
+ */
 export interface ResolvedLlmRuntimeModel {
   provider: string
   modelId: string
@@ -144,6 +168,12 @@ export interface ResolvedLlmRuntimeModel {
   llmProtocol?: 'responses' | 'chat-completions'
 }
 
+/**
+ * 解析LLM运行时模型选择
+ * @param userId 用户ID
+ * @param model 模型ID
+ * @returns 解析后的模型选择
+ */
 export async function resolveLlmRuntimeModel(
   userId: string,
   model: string,

@@ -7,6 +7,12 @@ import {
   toUploadFile,
 } from './common'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const _imgLog = (msg: string, ...args: any[]) => {
+  // eslint-disable-next-line no-console
+  console.log(`[OpenAI-Compat-Image] ${msg}`, ...args)
+}
+
 type OpenAIImageResponseFormat = 'url' | 'b64_json'
 type OpenAIImageOutputFormat = 'png' | 'jpeg' | 'webp'
 type OpenAIImageGenerateQuality = 'standard' | 'hd' | 'low' | 'medium' | 'high' | 'auto'
@@ -31,7 +37,11 @@ const OPENAI_IMAGE_OPTION_KEYS = new Set([
   'outputFormat',
 ])
 
-function assertAllowedOptions(options: Record<string, unknown>) {
+/**
+ * 断言OpenAI兼容图像选项是否支持
+ * @param options 图像选项
+ */
+export function assertAllowedOptions(options: Record<string, unknown>) {
   for (const [key, value] of Object.entries(options)) {
     if (value === undefined) continue
     if (!OPENAI_IMAGE_OPTION_KEYS.has(key)) {
@@ -40,6 +50,11 @@ function assertAllowedOptions(options: Record<string, unknown>) {
   }
 }
 
+/**
+ * 归一化OpenAI兼容图像响应格式
+ * @param value 原始值
+ * @returns 归一化后的响应格式
+ */
 function normalizeResponseFormat(value: unknown): OpenAIImageResponseFormat {
   const normalized = readStringOption(value, 'responseFormat')
   if (!normalized) return 'b64_json'
@@ -47,6 +62,11 @@ function normalizeResponseFormat(value: unknown): OpenAIImageResponseFormat {
   throw new Error(`OPENAI_COMPAT_IMAGE_OPTION_UNSUPPORTED: responseFormat=${normalized}`)
 }
 
+/**
+ * 归一化OpenAI兼容图像输出格式
+ * @param value 原始值
+ * @returns 归一化后的输出格式
+ */
 function normalizeOutputFormat(value: unknown): OpenAIImageOutputFormat | undefined {
   const normalized = readStringOption(value, 'outputFormat')
   if (!normalized) return undefined
@@ -54,6 +74,12 @@ function normalizeOutputFormat(value: unknown): OpenAIImageOutputFormat | undefi
   throw new Error(`OPENAI_COMPAT_IMAGE_OPTION_UNSUPPORTED: outputFormat=${normalized}`)
 }
 
+/**
+ * 
+ * 归一化OpenAI兼容图像生成质量
+ * @param value 原始值
+ * @returns 归一化后的生成质量
+ */
 function normalizeGenerateQuality(value: unknown): OpenAIImageGenerateQuality | undefined {
   const normalized = readStringOption(value, 'quality')
   if (!normalized) return undefined
@@ -161,7 +187,6 @@ export async function generateImageViaOpenAICompat(request: OpenAICompatImageReq
 
   assertAllowedOptions(options)
   const config = await resolveOpenAICompatClientConfig(userId, providerId)
-  const client = createOpenAICompatClient(config)
 
   const normalizedModelId = resolveModelId(modelId, options)
   const responseFormat = normalizeResponseFormat(options.responseFormat)
@@ -170,16 +195,67 @@ export async function generateImageViaOpenAICompat(request: OpenAICompatImageReq
   const rawSize = resolveRawSize(options)
   const size = normalizeOpenAIImageSize(rawSize)
 
+  const hasReferences = referenceImages.length > 0
+  const endpoint = hasReferences ? '/images/edits' : '/images/generations'
+  const fullUrl = `${config.baseUrl}${endpoint}`
+  const requestLogPayload = {
+    url: fullUrl,
+    baseUrl: config.baseUrl,
+    endpoint,
+    providerId,
+    modelId: normalizedModelId,
+    promptLength: prompt.length,
+    hasReferences,
+    referenceImageCount: referenceImages.length,
+    responseFormat,
+    outputFormat: outputFormat ?? null,
+    quality: quality ?? null,
+    size: size ?? null,
+    options,
+  }
+  _imgLog('request →', JSON.stringify(requestLogPayload, null, 2))
+
+  const client = createOpenAICompatClient(config)
+
   if (referenceImages.length > 0) {
-    const response = await client.images.edit({
+    const editPayload = {
       model: normalizedModelId,
-      prompt,
-      image: await Promise.all(referenceImages.map((image, index) => toUploadFile(image, index))),
+      prompt: prompt,
+      imageCount: referenceImages.length,
       response_format: responseFormat,
+      background: false,
       ...(outputFormat ? { output_format: outputFormat } : {}),
       ...(quality ? { quality } : {}),
       ...(size ? { size } : {}),
-    } as unknown as Parameters<typeof client.images.edit>[0])
+    }
+    _imgLog('images.edit payload →', JSON.stringify(editPayload, null, 2))
+
+    let response
+    try {
+      response = await client.images.edit({
+        model: normalizedModelId,
+        prompt,
+        image: await Promise.all(referenceImages.map((image, index) => toUploadFile(image, index))),
+        response_format: responseFormat,
+        background: false,  // 强制同步调用，避免 OneAPI 网关返回 403 异步不支持错误
+        ...(outputFormat ? { output_format: outputFormat } : {}),
+        ...(quality ? { quality } : {}),
+        ...(size ? { size } : {}),
+      } as unknown as Parameters<typeof client.images.edit>[0])
+    } catch (err) {
+      _imgLog('images.edit ERROR →', {
+        message: err instanceof Error ? err.message : String(err),
+        status: (err as { status?: number })?.status,
+        code: (err as { code?: string })?.code,
+        type: (err as { type?: string })?.type,
+        stack: err instanceof Error ? err.stack?.slice(0, 500) : undefined,
+      })
+      throw err
+    }
+    _imgLog('images.edit response →', JSON.stringify({
+      hasData: !!(response as { data?: unknown })?.data,
+      dataLength: Array.isArray((response as { data?: unknown[] })?.data) ? (response as { data: unknown[] }).data.length : 0,
+    }, null, 2))
 
     const imagePayload = readAllImagePayloads(response)
     const imageBase64 = imagePayload.b64Json
@@ -202,14 +278,42 @@ export async function generateImageViaOpenAICompat(request: OpenAICompatImageReq
     throw new Error('OPENAI_COMPAT_IMAGE_EMPTY_RESPONSE: no image data returned')
   }
 
-  const response = await client.images.generate({
+  const generatePayload = {
     model: normalizedModelId,
-    prompt,
+    prompt: prompt,
     response_format: responseFormat,
+    background: false,
     ...(outputFormat ? { output_format: outputFormat } : {}),
     ...(quality ? { quality } : {}),
     ...(size ? { size } : {}),
-  } as unknown as Parameters<typeof client.images.generate>[0])
+  }
+  _imgLog('images.generate payload →', JSON.stringify(generatePayload, null, 2))
+
+  let response
+  try {
+    response = await client.images.generate({
+      model: normalizedModelId,
+      prompt,
+      response_format: responseFormat,
+      background: false,  // 强制同步调用，避免 OneAPI 网关返回 403 异步不支持错误
+      ...(outputFormat ? { output_format: outputFormat } : {}),
+      ...(quality ? { quality } : {}),
+      ...(size ? { size } : {}),
+    } as unknown as Parameters<typeof client.images.generate>[0])
+  } catch (err) {
+    _imgLog('images.generate ERROR →', {
+      message: err instanceof Error ? err.message : String(err),
+      status: (err as { status?: number })?.status,
+      code: (err as { code?: string })?.code,
+      type: (err as { type?: string })?.type,
+      stack: err instanceof Error ? err.stack?.slice(0, 500) : undefined,
+    })
+    throw err
+  }
+  _imgLog('images.generate response →', JSON.stringify({
+    hasData: !!(response as { data?: unknown })?.data,
+    dataLength: Array.isArray((response as { data?: unknown[] })?.data) ? (response as { data: unknown[] }).data.length : 0,
+  }, null, 2))
 
   const imagePayload = readAllImagePayloads(response)
   const imageBase64 = imagePayload.b64Json

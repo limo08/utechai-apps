@@ -59,8 +59,15 @@ type OpenAIStreamWithFinal = AsyncIterable<unknown> & {
   finalChatCompletion?: () => Promise<OpenAI.Chat.Completions.ChatCompletion>
 }
 
-
-
+/**
+ * 调用LLM模型，返回聊天流
+ * @param userId 用户ID
+ * @param model 模型ID
+ * @param messages 消息列表
+ * @param options 调用选项
+ * @param callbacks 回调函数
+ * @returns 
+ */
 export async function chatCompletionStream(
   userId: string,
   model: string | null | undefined,

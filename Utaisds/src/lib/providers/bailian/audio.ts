@@ -40,12 +40,13 @@ export async function generateBailianAudio(params: BailianAudioGenerateParams): 
     throw new Error('BAILIAN_TEXT_REQUIRED')
   }
 
-  const { apiKey } = await getProviderConfig(params.userId, params.options.provider)
+  // 通过网关调用
+  const providerConfig = await getProviderConfig(params.userId, params.options.provider)
   const result = await synthesizeWithBailianTTS({
     text,
     voiceId,
     modelId: params.options.modelId,
-  }, apiKey)
+  }, providerConfig.apiKey, providerConfig.baseUrl)
   if (!result.success || !result.audioData) {
     throw new Error(result.error || 'BAILIAN_AUDIO_SYNTHESIZE_FAILED')
   }

@@ -230,7 +230,7 @@ export default function AssetHubPage() {
 
             if (res.ok) {
                 alert(t('voiceDesignSaved', { name: voiceDesignCharacter.name }))
-                queryClient.invalidateQueries({ queryKey: queryKeys.globalAssets.characters() })
+                queryClient.invalidateQueries({ queryKey: queryKeys.assets.all('global') })
                 refreshAssets()
             } else {
                 const data = await res.json()
@@ -324,7 +324,7 @@ export default function AssetHubPage() {
                 artStyle: characterEditModal.artStyle || undefined,
                 count: characterGenerationCount,
             })
-            queryClient.invalidateQueries({ queryKey: queryKeys.globalAssets.characters() })
+            queryClient.invalidateQueries({ queryKey: queryKeys.assets.all('global') })
         } catch (error) {
             _ulogError('触发生成失败:', error)
         }
@@ -340,7 +340,7 @@ export default function AssetHubPage() {
                 artStyle: locationEditModal.artStyle || undefined,
                 count: locationGenerationCount,
             })
-            queryClient.invalidateQueries({ queryKey: queryKeys.globalAssets.locations() })
+            queryClient.invalidateQueries({ queryKey: queryKeys.assets.all('global') })
         } catch (error) {
             _ulogError('触发生成失败:', error)
         }
@@ -356,7 +356,7 @@ export default function AssetHubPage() {
                 globalVoiceId: voice.id,
                 customVoiceUrl: voice.customVoiceUrl,
             })
-            queryClient.invalidateQueries({ queryKey: queryKeys.globalAssets.characters() })
+            queryClient.invalidateQueries({ queryKey: queryKeys.assets.all('global') })
             setVoicePickerCharacterId(null)
         } catch (error) {
             _ulogError('绑定音色失败:', error)
@@ -513,7 +513,7 @@ export default function AssetHubPage() {
                     onClose={() => setShowAddCharacter(false)}
                     onSuccess={() => {
                         setShowAddCharacter(false)
-                        queryClient.invalidateQueries({ queryKey: queryKeys.globalAssets.characters() })
+                        queryClient.invalidateQueries({ queryKey: queryKeys.assets.all('global') })
                         refreshAssets()
                     }}
                 />
@@ -527,7 +527,7 @@ export default function AssetHubPage() {
                     onClose={() => setShowAddLocation(false)}
                     onSuccess={() => {
                         setShowAddLocation(false)
-                        queryClient.invalidateQueries({ queryKey: queryKeys.globalAssets.locations() })
+                        queryClient.invalidateQueries({ queryKey: queryKeys.assets.all('global') })
                         refreshAssets()
                     }}
                 />
@@ -642,7 +642,7 @@ export default function AssetHubPage() {
                     onClose={() => setShowAddVoice(false)}
                     onSuccess={() => {
                         setShowAddVoice(false)
-                        queryClient.invalidateQueries({ queryKey: queryKeys.globalAssets.voices() })
+                        queryClient.invalidateQueries({ queryKey: queryKeys.assets.all('global') })
                         refreshAssets()
                     }}
                 />

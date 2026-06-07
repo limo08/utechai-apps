@@ -16,14 +16,14 @@ const prismaMock = vi.hoisted(() => ({
           modelId: 'qwen3-tts-vd-2026-01-26',
           modelKey: 'bailian::qwen3-tts-vd-2026-01-26',
           name: 'Qwen3 TTS',
-          type: 'audio',
+          type: 'tts',
           provider: 'bailian',
         },
         {
           modelId: 'qwen-voice-design',
           modelKey: 'bailian::qwen-voice-design',
           name: 'Qwen Voice Design',
-          type: 'audio',
+          type: 'tts',
           provider: 'bailian',
         },
       ]),
@@ -34,7 +34,11 @@ const prismaMock = vi.hoisted(() => ({
           apiKey: 'k-bailian',
         },
       ]),
+      videoModel: '',
     })),
+  },
+  availableModel: {
+    findMany: vi.fn(async () => []),
   },
 }))
 
@@ -63,8 +67,8 @@ describe('api specific - user models audio filter', () => {
     const res = await mod.GET(req, routeContext)
 
     expect(res.status).toBe(200)
-    const body = await res.json() as { audio: Array<{ value: string }> }
-    expect(body.audio.map((item) => item.value)).toEqual([
+    const body = await res.json() as { tts: Array<{ value: string }> }
+    expect(body.tts.map((item) => item.value)).toEqual([
       'bailian::qwen3-tts-vd-2026-01-26',
     ])
   })

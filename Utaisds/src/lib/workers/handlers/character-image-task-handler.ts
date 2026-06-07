@@ -76,6 +76,16 @@ export async function handleCharacterImageTask(job: Job<TaskJobData>) {
   const userId = job.data.userId
   const models = await getProjectModels(projectId, userId)
   const modelId = models.characterModel
+
+  // 调试日志：打印从配置中读取的模型
+  // eslint-disable-next-line no-console
+  console.log(`[handleCharacterImageTask] models from config:`, {
+    projectId,
+    userId,
+    characterModel: modelId,
+    artStyle: models.artStyle,
+  })
+
   if (!modelId) throw new Error('Character model not configured')
 
   const appearanceId = pickFirstString(job.data.targetId, payload.appearanceId)

@@ -2,9 +2,11 @@
 
 import { usePageLoading } from '@/components/providers/PageLoadingProvider'
 import { AppIcon } from '@/components/ui/icons'
+import { useTranslations } from 'next-intl'
 
 export default function PageLoadingOverlay() {
   const { isLoading } = usePageLoading()
+  const t = useTranslations('common')
 
   if (!isLoading) return null
 
@@ -18,7 +20,7 @@ export default function PageLoadingOverlay() {
           </div>
         </div>
         <div className="rounded-full bg-white/90 px-6 py-2 shadow-lg">
-          <p className="text-sm font-medium text-gray-700">加载中...</p>
+          <p className="text-sm font-medium text-gray-700">{t('loading')}</p>
         </div>
       </div>
     </div>

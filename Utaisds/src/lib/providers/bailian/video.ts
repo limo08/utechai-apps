@@ -24,8 +24,28 @@ function assertRegistered(modelId: string): void {
   })
 }
 
-const BAILIAN_VIDEO_ENDPOINT = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/video-generation/video-synthesis'
-const BAILIAN_KF2V_ENDPOINT = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/image2video/video-synthesis'
+// 网关基础 URL 处理函数
+function resolveGatewayBaseUrl(baseUrl?: string): string | undefined {
+  if (!baseUrl) return undefined
+  return baseUrl.replace(/\/v1\/?$/, '')
+}
+
+function resolveVideoEndpoint(baseUrl?: string): string {
+  const gatewayBaseUrl = resolveGatewayBaseUrl(baseUrl)
+  if (gatewayBaseUrl) {
+    return `${gatewayBaseUrl}/api/v1/services/aigc/video-generation/video-synthesis`
+  }
+  return 'https://dashscope.aliyuncs.com/api/v1/services/aigc/video-generation/video-synthesis'
+}
+
+function resolveKf2vEndpoint(baseUrl?: string): string {
+  const gatewayBaseUrl = resolveGatewayBaseUrl(baseUrl)
+  if (gatewayBaseUrl) {
+    return `${gatewayBaseUrl}/api/v1/services/aigc/image2video/video-synthesis`
+  }
+  return 'https://dashscope.aliyuncs.com/api/v1/services/aigc/image2video/video-synthesis'
+}
+
 const BAILIAN_FIRST_LAST_FRAME_ONLY_MODELS = new Set([
   'wan2.2-kf2v-flash',
   'wanx2.1-kf2v-plus',
@@ -104,7 +124,7 @@ function assertNoUnsupportedOptions(options: BailianGenerateRequestOptions): voi
   }
 }
 
-function buildSubmitRequest(params: BailianVideoGenerateParams): {
+function buildSubmitRequest(params: BailianVideoGenerateParams, baseUrl?: string): {
   endpoint: string
   body: BailianVideoSubmitBody
 } {
@@ -170,7 +190,7 @@ function buildSubmitRequest(params: BailianVideoGenerateParams): {
   }
 
   return {
-    endpoint: firstLastFrame ? BAILIAN_KF2V_ENDPOINT : BAILIAN_VIDEO_ENDPOINT,
+    endpoint: firstLastFrame ? resolveKf2vEndpoint(baseUrl) : resolveVideoEndpoint(baseUrl),
     body: submitBody,
   }
 }
@@ -193,8 +213,11 @@ export async function generateBailianVideo(params: BailianVideoGenerateParams): 
   assertRegistered(params.options.modelId)
   assertNoUnsupportedOptions(params.options)
 
-  const { apiKey } = await getProviderConfig(params.userId, params.options.provider)
-  const submitRequest = buildSubmitRequest(params)
+  // 通过网关调用
+  const providerConfig = await getProviderConfig(params.userId, params.options.provider)
+  const apiKey = providerConfig.apiKey
+  const baseUrl = providerConfig.baseUrl
+  const submitRequest = buildSubmitRequest(params, baseUrl)
   const response = await fetch(submitRequest.endpoint, {
     method: 'POST',
     headers: {

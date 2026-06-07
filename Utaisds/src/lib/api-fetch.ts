@@ -1,3 +1,8 @@
+/**
+ * 从路径中提取语言
+ * @param pathname 路径
+ * @returns 语言
+ */
 const LOCALE_PATH_PATTERN = /^\/(zh|en)(\/|$)/
 
 function resolveLocaleFromPath(pathname: string): string {
@@ -44,6 +49,13 @@ export function mergeLocaleHeader(init?: RequestInit): RequestInit {
   return { ...init, headers }
 }
 
+/**
+ * 发送 API 请求
+ * 自动添加语言头
+ * @param input 请求输入
+ * @param init 请求初始化
+ * @returns 响应
+ */
 export async function apiFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
   if (!shouldInjectLocaleHeader(input)) {
     return fetch(input, init)

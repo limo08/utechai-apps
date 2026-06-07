@@ -126,8 +126,10 @@ export function ModelCapabilityDropdown({
     const t = useTranslations('configModal')
     const tv = useTranslations('video')
     const [isOpen, setIsOpen] = useState(false)
+    const [searchQuery, setSearchQuery] = useState('')
     const triggerRef = useRef<HTMLDivElement>(null)
     const panelRef = useRef<HTMLDivElement>(null)
+    const searchInputRef = useRef<HTMLInputElement>(null)
     const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({})
 
     const updateDropdownPlacement = useCallback(() => {
@@ -193,14 +195,33 @@ export function ModelCapabilityDropdown({
     const handleToggleOpen = () => {
         if (isOpen) {
             setIsOpen(false)
+            setSearchQuery('')
             return
         }
+        setSearchQuery('')
         updateDropdownPlacement()
         setIsOpen(true)
+        // Auto-focus search input after panel renders
+        requestAnimationFrame(() => {
+            searchInputRef.current?.focus()
+        })
     }
 
     const selectedModel = models.find((m) => m.value === value)
     const visibleCapabilityFields = capabilityFields.filter((field) => field.field !== 'generationMode')
+
+    // Filter models by search query
+    const filteredModels = searchQuery.trim()
+        ? models.filter((m) => {
+            const query = searchQuery.toLowerCase()
+            return (
+                m.label.toLowerCase().includes(query) ||
+                (m.providerName || '').toLowerCase().includes(query) ||
+                (m.provider || '').toLowerCase().includes(query) ||
+                m.value.toLowerCase().includes(query)
+            )
+        })
+        : models
 
     const resolveCapabilityLabel = useCallback((field: CapabilityFieldDefinition): string => {
         try {
@@ -265,6 +286,21 @@ export function ModelCapabilityDropdown({
                         )}
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
+                        {selectedModel && (
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    onModelChange('')
+                                    setIsOpen(false)
+                                    setSearchQuery('')
+                                }}
+                                className="w-4 h-4 flex items-center justify-center rounded-full text-[var(--glass-text-tertiary)] hover:text-[var(--glass-text-primary)] hover:bg-[var(--glass-bg-surface-strong)] transition-colors"
+                                title={t('clear') || '清除选择'}
+                            >
+                                <AppIcon name="close" className="w-3 h-3" />
+                            </button>
+                        )}
                         {selectedModel && (paramSummary || selectedModel.providerName || selectedModel.provider) && (
                             <span className="relative group/info">
                                 <AppIcon name="info" className="w-4 h-4 text-[var(--glass-text-tertiary)] hover:text-[var(--glass-text-secondary)] transition-colors cursor-help" />
@@ -287,13 +323,47 @@ export function ModelCapabilityDropdown({
                 >
                     {/* Model list */}
                     <div className="px-2 pb-2 min-h-0 flex-1 overflow-y-auto app-scrollbar">
+                        {/* Search input */}
+                        {models.length > 5 && (
+                            <div className="sticky top-0 z-20 px-1 pt-2 pb-1 bg-white/90 dark:bg-[#1c1c1e]/90 backdrop-blur-md">
+                                <div className="relative">
+                                    <AppIcon name="search" className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--glass-text-tertiary)] pointer-events-none" />
+                                    <input
+                                        ref={searchInputRef}
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder={t('searchModel') || '搜索模型...'}
+                                        className="w-full pl-8 pr-3 py-1.5 text-sm rounded-lg bg-[var(--glass-bg-muted)] border border-[var(--glass-stroke-base)] text-[var(--glass-text-primary)] placeholder:text-[var(--glass-text-tertiary)] outline-none focus:border-[var(--glass-tone-info-fg)] focus:ring-1 focus:ring-[var(--glass-tone-info-fg)]/30 transition-all"
+                                    />
+                                    {searchQuery && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setSearchQuery('')}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center rounded-full bg-[var(--glass-bg-surface-strong)] text-[var(--glass-text-tertiary)] hover:text-[var(--glass-text-primary)] transition-colors"
+                                        >
+                                            <AppIcon name="close" className="w-3 h-3" />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                         {(() => {
-                            // Group models by provider
+                            // Group filtered models by provider
                             const grouped = new Map<string, ModelCapabilityOption[]>()
-                            for (const m of models) {
+                            for (const m of filteredModels) {
                                 const key = m.providerName || m.provider || 'Other'
                                 if (!grouped.has(key)) grouped.set(key, [])
                                 grouped.get(key)!.push(m)
+                            }
+                            if (grouped.size === 0) {
+                                return (
+                                    <div className="px-4 py-8 text-center">
+                                        <p className="text-sm text-[var(--glass-text-tertiary)]">
+                                            {t('noModelFound') || '未找到匹配的模型'}
+                                        </p>
+                                    </div>
+                                )
                             }
                             return Array.from(grouped.entries()).map(([providerLabel, groupModels]) => (
                                 <div key={providerLabel} className="mb-1">

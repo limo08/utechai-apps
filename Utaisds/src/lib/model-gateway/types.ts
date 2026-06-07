@@ -1,4 +1,4 @@
-export type ModelGatewayRoute = 'official' | 'openai-compat'
+export type ModelGatewayRoute =  'openai-compat' | 'official'
 
 export type CompatibleProviderKey = 'openai-compatible'
 

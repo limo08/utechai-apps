@@ -228,11 +228,12 @@ export async function cleanupUnreferencedBailianVoices(params: {
     }
   }
 
-  const { apiKey } = await getProviderConfig(params.scope.userId, 'bailian')
+  // 通过网关调用
+  const gatewayConfig = await getProviderConfig(params.scope.userId, 'gateway')
   const deletedVoiceIds: string[] = []
   for (const voiceId of toDelete) {
     try {
-      await deleteBailianVoice({ apiKey, voiceId })
+      await deleteBailianVoice({ apiKey: gatewayConfig.apiKey, voiceId, baseUrl: gatewayConfig.baseUrl })
       deletedVoiceIds.push(voiceId)
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error)

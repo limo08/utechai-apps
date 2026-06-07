@@ -10,6 +10,11 @@ const OFFICIAL_ONLY_PROVIDER_KEYS = new Set([
   'siliconflow',
 ])
 
+/**
+ * 判断提供程序是否兼容
+ * @param providerId 提供程序 ID
+ * @returns 是否兼容
+ */
 export function isCompatibleProvider(providerId: string): boolean {
   const providerKey = getProviderKey(providerId).toLowerCase()
   return COMPATIBLE_PROVIDER_KEYS.has(providerKey)

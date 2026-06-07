@@ -23,11 +23,12 @@ export interface VoiceDesignResult {
 export async function createVoiceDesign(
   input: VoiceDesignInput,
   apiKey: string,
+  baseUrl?: string,
 ): Promise<VoiceDesignResult> {
   if (!apiKey) {
     return {
       success: false,
-      error: '请配置阿里百炼 API Key',
+      error: '请配置 API Key',
     }
   }
 
@@ -47,10 +48,20 @@ export async function createVoiceDesign(
     },
   }
 
+  // 通过模型网关调用：baseUrl + /api/v1/services/audio/tts/customization
+  // 如果 baseUrl 已包含 /v1 后缀，需要去掉（因为网关路径是 /api/v1/...）
+  const gatewayBaseUrl = baseUrl
+    ? baseUrl.replace(/\/v1\/?$/, '')
+    : undefined
+  const url = gatewayBaseUrl
+    ? `${gatewayBaseUrl}/api/v1/services/audio/tts/customization`
+    : `https://dashscope.aliyuncs.com/api/v1/services/audio/tts/customization`
+
   _ulogInfo('[VoiceDesign] 请求体:', JSON.stringify(requestBody, null, 2))
+  _ulogInfo('[VoiceDesign] 请求地址:', url)
 
   try {
-    const response = await fetch('https://dashscope.aliyuncs.com/api/v1/services/audio/tts/customization', {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,

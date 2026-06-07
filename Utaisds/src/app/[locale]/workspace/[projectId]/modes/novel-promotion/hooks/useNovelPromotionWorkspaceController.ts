@@ -159,7 +159,7 @@ export function useNovelPromotionWorkspaceController({
     isStartingScriptToStoryboard,
     videoRatio: projectSnapshot.videoRatio,
     artStyle: projectSnapshot.artStyle,
-    videoModel: projectSnapshot.videoModel,
+    videoModel: projectSnapshot.videoModel || userModels.userDefaultVideoModel || undefined,
     capabilityOverrides: projectSnapshot.capabilityOverrides,
     userVideoModels: userModels.userVideoModels || [],
     handleUpdateEpisode: configActions.handleUpdateEpisode,

@@ -771,12 +771,19 @@ async function pollBailianTask(requestId: string, userId: string): Promise<PollR
     const logPrefix = '[Bailian Query]'
 
     try {
-        const { apiKey } = await getProviderConfig(userId, 'bailian')
+        // 通过网关调用
+        const gatewayConfig = await getProviderConfig(userId, 'gateway')
+        const gatewayBaseUrl = gatewayConfig.baseUrl
+            ? gatewayConfig.baseUrl.replace(/\/v1\/?$/, '')
+            : undefined
+        const url = gatewayBaseUrl
+            ? `${gatewayBaseUrl}/api/v1/tasks/${encodeURIComponent(requestId)}`
+            : `https://dashscope.aliyuncs.com/api/v1/tasks/${encodeURIComponent(requestId)}`
         const response = await fetch(
-            `https://dashscope.aliyuncs.com/api/v1/tasks/${encodeURIComponent(requestId)}`,
+            url,
             {
                 headers: {
-                    'Authorization': `Bearer ${apiKey}`,
+                    'Authorization': `Bearer ${gatewayConfig.apiKey}`,
                 },
             },
         )

@@ -22,6 +22,9 @@ export interface UserModelsPayload {
     tts: UserModelOption[]
     lipsync: UserModelOption[]
     voice_design: UserModelOption[]
+    defaults?: {
+        videoModel?: string
+    }
 }
 
 export function useUserModels() {
@@ -40,6 +43,7 @@ export function useUserModels() {
                 tts: Array.isArray(data?.tts) ? data.tts : [],
                 lipsync: Array.isArray(data?.lipsync) ? data.lipsync : [],
                 voice_design: Array.isArray(data?.voice_design) ? data.voice_design : [],
+                defaults: data?.defaults ?? {},
             } as UserModelsPayload
         },
     })

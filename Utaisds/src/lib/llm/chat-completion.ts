@@ -51,7 +51,9 @@ function errorMessage(error: unknown): string {
 }
 
 
-
+/**
+ * 调用LLM模型，返回聊天完成结果
+ */
 export async function chatCompletion(
   userId: string,
   model: string | null | undefined,

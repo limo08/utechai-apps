@@ -115,7 +115,8 @@ export default function CharacterSection({
         })
         : null
 
-    const { data: assets } = useProjectAssets(projectId)
+    // 🔥 捕获 isLoading 状态，防止首次加载时渲染空网格导致的闪动
+    const { data: assets, isLoading } = useProjectAssets(projectId)
     const allCharacters: Character[] = useMemo(() => assets?.characters ?? [], [assets?.characters])
     // 🔥 V7：排除待确认角色，避免同一角色在待确认区与已确认网格中重复出现
     const unconfirmedIds = useMemo(
@@ -153,7 +154,7 @@ export default function CharacterSection({
             const startTop = scrollContainer.scrollTop
             const elementTop = element.getBoundingClientRect().top - scrollContainer.getBoundingClientRect().top + scrollContainer.scrollTop
             const targetTop = Math.max(0, elementTop - (scrollContainer.clientHeight - element.clientHeight) / 2)
-            const duration = 650
+            const duration = 550
             const startTime = performance.now()
             const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3)
 
@@ -262,6 +263,24 @@ export default function CharacterSection({
             )}
 
             {/* 按角色分组显示：外层 grid 让多角色并排 */}
+            {isLoading ? (
+                // 🔥 加载骨架屏：保持布局稳定，防止空网格→填充网格的闪动
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {[0, 1, 2].map((i) => (
+                        <div key={i} className="glass-surface rounded-xl p-4 animate-pulse">
+                            <div className="flex items-center justify-between pb-2">
+                                <div className="h-5 w-24 bg-[var(--glass-bg-muted)] rounded-lg" />
+                                <div className="h-4 w-10 bg-[var(--glass-bg-muted)] rounded-lg" />
+                            </div>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                {[0, 1, 2].map((j) => (
+                                    <div key={j} className="aspect-square rounded-xl bg-[var(--glass-bg-muted)]" />
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {characters.map(character => {
                     const appearances = getAppearances(character)
@@ -381,6 +400,7 @@ export default function CharacterSection({
                     )
                 })}
             </div>
+            )}  {/* 🔥 结束 isLoading 条件渲染 */}
         </div>
     )
 }

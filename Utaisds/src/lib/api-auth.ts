@@ -25,6 +25,12 @@ export interface AuthSession {
     }
 }
 
+/**
+ * 绑定认证上下文到日志上下文
+ * @param session 当前认证会话
+ * @param projectId 项目 ID，可选
+ * @returns 
+ */
 function bindAuthLogContext(session: AuthSession, projectId?: string) {
     const context = getLogContext()
     if (!context.requestId) return
@@ -34,6 +40,12 @@ function bindAuthLogContext(session: AuthSession, projectId?: string) {
     })
 }
 
+/**
+ * 获取内部任务会话
+ * 仅在开发环境下有效，生产环境下返回 null
+ * @param req 当前请求
+ * @returns 认证会话或 null
+ */
 async function getInternalTaskSession(): Promise<AuthSession | null> {
     const expectedToken = process.env.INTERNAL_TASK_TOKEN || ''
 

@@ -100,8 +100,9 @@ function serializeCapabilitySelections(selections: CapabilitySelections): string
 
 function validateModelKeyField(field: typeof MODEL_FIELDS[number], value: unknown) {
   // Contract anchor: model key must be provider::modelId
-  if (value === null) return
-  if (typeof value !== 'string' || !value.trim()) {
+  // null or empty string means "clear the field"
+  if (value === null || value === '' || (typeof value === 'string' && !value.trim())) return
+  if (typeof value !== 'string') {
     throw new ApiError('INVALID_PARAMS', {
       code: 'MODEL_KEY_INVALID',
       field})
@@ -303,6 +304,9 @@ export const PATCH = apiHandler(async (
 
     if ((MODEL_FIELDS as readonly string[]).includes(field)) {
       validateModelKeyField(field as typeof MODEL_FIELDS[number], body[field])
+      // Convert empty string to null for model fields (clear operation)
+      updateData[field] = (typeof body[field] === 'string' && !body[field].trim()) ? null : body[field]
+      continue
     }
 
     if (field === 'artStyle') {

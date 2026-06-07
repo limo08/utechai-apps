@@ -15,7 +15,24 @@ export const POST = apiHandler(async (
   context: { params: Promise<{ assetId: string }> },
 ) => {
   const { assetId } = await context.params
-  const body = await request.json() as GenerateBody
+
+  // 读取并解析请求 body
+  let body: GenerateBody
+  try {
+    const text = await request.text()
+    if (!text) {
+      throw new ApiError('INVALID_PARAMS', {
+        details: 'Request body is empty',
+      })
+    }
+    body = JSON.parse(text) as GenerateBody
+  } catch (error) {
+    if (error instanceof ApiError) throw error
+    throw new ApiError('INVALID_PARAMS', {
+      details: `Failed to parse request body: ${error instanceof Error ? error.message : String(error)}`,
+    })
+  }
+
   if ((body.scope !== 'global' && body.scope !== 'project') || (body.kind !== 'character' && body.kind !== 'location' && body.kind !== 'prop')) {
     throw new ApiError('INVALID_PARAMS')
   }

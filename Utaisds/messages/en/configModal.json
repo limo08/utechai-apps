@@ -32,5 +32,8 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "boolOn": "On",
-    "boolOff": "Off"
+    "boolOff": "Off",
+    "searchModel": "Search models...",
+    "noModelFound": "No matching models found",
+    "clear": "Clear selection"
 }

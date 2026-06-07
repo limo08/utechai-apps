@@ -22,6 +22,9 @@ export interface UserModelsPayload {
   tts: UserModelOption[]
   lipsync: UserModelOption[]
   voice_design: UserModelOption[]
+  defaults?: {
+    videoModel?: string
+  }
 }
 
 export function useWorkspaceUserModels() {
@@ -30,6 +33,9 @@ export function useWorkspaceUserModels() {
   const userVideoModels = useMemo<UserModelOption[]>(() => {
     if (!userModelsForSettings || !Array.isArray(userModelsForSettings.video)) return []
     return userModelsForSettings.video
+  }, [userModelsForSettings])
+  const userDefaultVideoModel = useMemo<string>(() => {
+    return userModelsForSettings?.defaults?.videoModel || ''
   }, [userModelsForSettings])
   const userModelsLoaded = userModelsQuery.isFetched
 
@@ -42,6 +48,7 @@ export function useWorkspaceUserModels() {
   return {
     userModelsForSettings,
     userVideoModels,
+    userDefaultVideoModel,
     userModelsLoaded,
   }
 }

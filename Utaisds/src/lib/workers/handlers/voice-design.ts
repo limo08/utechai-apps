@@ -46,14 +46,15 @@ export async function handleVoiceDesignTask(job: Job<TaskJobData>) {
   })
   await assertTaskActive(job, 'voice_design_submit')
 
-  const { apiKey } = await getProviderConfig(job.data.userId, 'bailian')
+  // 通过网关调用音色设计
+  const gatewayConfig = await getProviderConfig(job.data.userId, 'gateway')
   const input: VoiceDesignInput = {
     voicePrompt,
     previewText,
     preferredName,
     language,
   }
-  const designed = await createVoiceDesign(input, apiKey)
+  const designed = await createVoiceDesign(input, gatewayConfig.apiKey, gatewayConfig.baseUrl)
   if (!designed.success) {
     throw new Error(designed.error || '声音设计失败')
   }

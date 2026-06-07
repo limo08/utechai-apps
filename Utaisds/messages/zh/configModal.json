@@ -32,5 +32,8 @@
     "cancel": "取消",
     "delete": "删除",
     "boolOn": "开",
-    "boolOff": "关"
+    "boolOff": "关",
+    "searchModel": "搜索模型...",
+    "noModelFound": "未找到匹配的模型",
+    "clear": "清除选择"
 }

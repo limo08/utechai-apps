@@ -4,6 +4,7 @@ import React from 'react'
 import { useTranslations } from 'next-intl'
 import { CustomModel } from './types'
 import { AppIcon } from '@/components/ui/icons'
+import { SearchableSelect } from '@/components/ui/config-modals/SearchableSelect'
 
 interface DefaultModelSectionProps {
     type: 'text' | 'image' | 'video' | 'lipsync'
@@ -56,18 +57,17 @@ export function DefaultModelSection({
                 {selectors.map(({ field, label }) => (
                     <div key={field} className="flex items-center gap-3">
                         <label className="w-24 shrink-0 text-sm text-[var(--glass-text-secondary)]">{label}</label>
-                        <select
-                            value={defaultModels[field as keyof typeof defaultModels] || ''}
-                            onChange={(e) => onUpdateDefault(field, e.target.value)}
-                            className="glass-select-base flex-1 px-3 py-2 text-sm"
-                        >
-                            <option value="">{t('defaultModel.notSelected')}</option>
-                            {enabledModels.map((model) => (
-                                <option key={model.modelKey} value={model.modelKey}>
-                                    {model.name}
-                                </option>
-                            ))}
-                        </select>
+                        <div className="flex-1">
+                            <SearchableSelect
+                                options={enabledModels.map((model) => ({
+                                    value: model.modelKey,
+                                    label: model.name,
+                                }))}
+                                value={defaultModels[field as keyof typeof defaultModels] || ''}
+                                onChange={(val) => onUpdateDefault(field, val)}
+                                placeholder={t('defaultModel.notSelected')}
+                            />
+                        </div>
                     </div>
                 ))}
             </div>

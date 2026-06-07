@@ -47,7 +47,7 @@ export interface ModelSelection {
   compatMediaTemplate?: OpenAICompatMediaTemplate
 }
 
-type GatewayRouteType = 'official' | 'openai-compat'
+type GatewayRouteType =  'openai-compat' | 'official'
 
 interface CustomProvider {
   id: string
@@ -68,20 +68,26 @@ function normalizeProviderBaseUrl(providerId: string, rawBaseUrl?: string): stri
 
   const baseUrl = readTrimmedString(rawBaseUrl)
   if (!baseUrl) return undefined
-  if (providerKey !== 'openai-compatible') return baseUrl
+  if (providerKey !== 'openai-compatible' && providerKey !== 'gateway') return baseUrl
 
+  return ensureV1Suffix(baseUrl)
+}
+
+/**
+ * 确保 URL 以 /v1 结尾（去除尾部斜杠后追加）。
+ * 供 openai-compatible / gateway 等需要 OpenAI 兼容路径的 provider 使用。
+ */
+function ensureV1Suffix(rawUrl: string): string {
   try {
-    const parsed = new URL(baseUrl)
+    const parsed = new URL(rawUrl)
     const pathSegments = parsed.pathname.split('/').filter(Boolean)
-    const hasV1 = pathSegments.includes('v1')
-    if (hasV1) return baseUrl
+    if (pathSegments.includes('v1')) return rawUrl
 
     const trimmedPath = parsed.pathname.replace(/\/+$/, '')
     parsed.pathname = `${trimmedPath === '' || trimmedPath === '/' ? '' : trimmedPath}/v1`
     return parsed.toString()
   } catch {
-    // Keep original value to avoid hiding invalid-config errors.
-    return baseUrl
+    return rawUrl
   }
 }
 
@@ -364,16 +370,71 @@ export async function resolveModelSelection(
 ): Promise<ModelSelection> {
   const parsed = assertModelKey(model, `${mediaType} model`)
 
-  // ── Gateway model: 来自 AvailableModel 表，不在 customModels 中 ──
+  // ── Gateway model: 优先从 customModels 查找，再从 AvailableModel 表查找 ──
   if (parsed.provider === GATEWAY_PROVIDER) {
     const actualModelId = resolveGatewayModelId(parsed.modelId)
     if (!actualModelId) {
       throw new Error(`MODEL_NOT_FOUND: ${parsed.modelKey} has empty model id`)
     }
+
+    // 1. 先查 customModels（用户手动添加的模型）
+    const customModels = await getUserModels(userId)
+    const customModel = customModels.find((m) => m.modelKey === parsed.modelKey)
+
+    if (customModel) {
+      // 自定义模型存在，使用自定义模型的名称
+      const modelKey = composeModelKey(GATEWAY_PROVIDER, actualModelId)
+      return {
+        provider: GATEWAY_PROVIDER,
+        modelId: customModel.name || customModel.modelId,
+        modelKey,
+        mediaType,
+      }
+    }
+
+    // 2. 自定义模型不存在，查 available_models 表（网关同步的模型）
+    // 从 available_models 表获取模型名称（model_name），
+    // 因为 OpenAI 兼容 API 的 model 参数需要模型名称而非数字 ID
+    // 必须按 unifiedType 过滤，因为同一个 modelId 可能在不同类型下有不同的模型名称
+    const queryWhere = {
+      userId,
+      modelId: actualModelId,
+      modelKey: { startsWith: 'gateway::' },
+      unifiedType: mediaType,
+    }
+
+    // 调试日志：打印模型解析过程
+    // eslint-disable-next-line no-console
+    console.log(`[resolveModelSelection] gateway branch (fallback to available_models):`, {
+      inputModelKey: model,
+      mediaType,
+      parsedModelId: parsed.modelId,
+      actualModelId,
+      queryWhere,
+    })
+
+    const gatewayModel = await prisma.availableModel.findFirst({
+      where: queryWhere,
+      select: { modelKey: true, modelId: true, name: true, unifiedType: true },
+    })
+
+    // 调试日志：打印查询结果
+    // eslint-disable-next-line no-console
+    console.log(`[resolveModelSelection] gateway query result:`, gatewayModel)
+
+    const modelName = gatewayModel?.name || actualModelId
+
+    // 调试日志：打印最终结果
+    // eslint-disable-next-line no-console
+    console.log(`[resolveModelSelection] final result:`, {
+      modelName,
+      modelKey: composeModelKey(GATEWAY_PROVIDER, actualModelId),
+    })
+
     const modelKey = composeModelKey(GATEWAY_PROVIDER, actualModelId)
     return {
       provider: GATEWAY_PROVIDER,
-      modelId: actualModelId,
+      modelId: modelName,
       modelKey,
       mediaType,
     }
@@ -483,7 +544,7 @@ export async function getProviderConfig(userId: string, providerId: string): Pro
       id: GATEWAY_PROVIDER,
       name: 'Model Gateway',
       apiKey: utKey,
-      baseUrl: gatewayUrl,
+      baseUrl: ensureV1Suffix(gatewayUrl),
       gatewayRoute: 'openai-compat',
     }
   }

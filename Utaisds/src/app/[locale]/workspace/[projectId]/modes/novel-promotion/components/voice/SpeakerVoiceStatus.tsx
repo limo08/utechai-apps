@@ -33,6 +33,7 @@ export default function SpeakerVoiceStatus({
      */
     const handleVoiceSettings = (speaker: string) => {
         const hasCharacter = hasSpeakerCharacter ? hasSpeakerCharacter(speaker) : true
+        console.log("================speaker=====================", speaker)
         if (hasCharacter || !onOpenInlineBinding) {
             onOpenAssetLibrary(speaker)
         } else {

@@ -141,6 +141,22 @@ export async function getUserWorkflowConcurrencyConfig(
   })
 }
 
+function isLegacyGatewayKey(key: string | null): boolean {
+  if (!key) return false
+  // 旧格式: gateway::46 (纯数字，无 __type 后缀)
+  // 新格式: gateway::46__image 或 gateway::118__image
+  return /^gateway::\d+$/.test(key)
+}
+
+function resolveModelValue(projectValue: string | null | undefined, userValue: string | null | undefined): string | null {
+  const projectKey = extractModelKey(projectValue ?? null)
+  // 旧格式 gateway::46 无效，跳过项目配置，使用用户配置
+  if (projectKey && !isLegacyGatewayKey(projectKey)) {
+    return projectKey
+  }
+  return extractModelKey(userValue ?? null) || null
+}
+
 /**
  * 获取项目级模型配置
  */
@@ -153,14 +169,24 @@ export async function getProjectModelConfig(
     prisma.userPreference.findUnique({ where: { userId } }),
   ])
 
+  // eslint-disable-next-line no-console
+  console.log(`[getProjectModelConfig] raw data:`, {
+    projectId,
+    userId,
+    projectCharacterModel: projectData?.characterModel || null,
+    projectLocationModel: projectData?.locationModel || null,
+    userCharacterModel: userPref?.characterModel || null,
+    userLocationModel: userPref?.locationModel || null,
+  })
+
   return {
-    analysisModel: extractModelKey(projectData?.analysisModel) || extractModelKey(userPref?.analysisModel) || null,
-    characterModel: extractModelKey(projectData?.characterModel) || null,
-    locationModel: extractModelKey(projectData?.locationModel) || null,
-    storyboardModel: extractModelKey(projectData?.storyboardModel) || null,
-    editModel: extractModelKey(projectData?.editModel) || null,
-    videoModel: extractModelKey(projectData?.videoModel) || null,
-    audioModel: extractModelKey(projectData?.audioModel) || extractModelKey(userPref?.audioModel) || null,
+    analysisModel: resolveModelValue(projectData?.analysisModel, userPref?.analysisModel),
+    characterModel: resolveModelValue(projectData?.characterModel, userPref?.characterModel),
+    locationModel: resolveModelValue(projectData?.locationModel, userPref?.locationModel),
+    storyboardModel: resolveModelValue(projectData?.storyboardModel, userPref?.storyboardModel),
+    editModel: resolveModelValue(projectData?.editModel, userPref?.editModel),
+    videoModel: resolveModelValue(projectData?.videoModel, userPref?.videoModel),
+    audioModel: resolveModelValue(projectData?.audioModel, userPref?.audioModel),
     videoRatio: projectData?.videoRatio || '16:9',
     artStyle: projectData?.artStyle || null,
     capabilityDefaults: parseCapabilitySelections(userPref?.capabilityDefaults),

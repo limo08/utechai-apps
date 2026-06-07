@@ -44,19 +44,8 @@ export function useSSE({ projectId, episodeId, enabled = true, onEvent }: UseSSE
 
     const invalidateByTarget = (targetType: string | null, resolvedEpisodeId: string | null) => {
       if (isGlobalAssetProject) {
-        if (targetType?.startsWith('GlobalCharacter')) {
-          queryClient.invalidateQueries({ queryKey: queryKeys.globalAssets.characters() })
-          return
-        }
-        if (targetType?.startsWith('GlobalLocation')) {
-          queryClient.invalidateQueries({ queryKey: queryKeys.globalAssets.locations() })
-          return
-        }
-        if (targetType?.startsWith('GlobalVoice')) {
-          queryClient.invalidateQueries({ queryKey: queryKeys.globalAssets.voices() })
-          return
-        }
-        queryClient.invalidateQueries({ queryKey: queryKeys.globalAssets.all() })
+        // Use the unified asset query keys so refetch actually hits the active queries
+        queryClient.invalidateQueries({ queryKey: queryKeys.assets.all('global') })
         return
       }
 

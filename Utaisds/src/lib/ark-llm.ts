@@ -48,6 +48,14 @@ function collectText(node: unknown, acc: string[]) {
     if (obj.message && typeof obj.message !== 'string') collectText(obj.message, acc)
 }
 
+/**
+ * 递归收集所有推理内容
+ * @param node 节点
+ * @param acc 节点内容
+ * @returns 
+ * @param acc 
+ * @returns 
+ */
 function collectReasoning(node: unknown, acc: string[]) {
     if (!node) return
     if (typeof node === 'string') return
@@ -71,6 +79,12 @@ function collectReasoning(node: unknown, acc: string[]) {
     if (obj.thinking) collectReasoning(obj.thinking, acc)
 }
 
+
+/**
+ * 从 Ark LLM 响应中提取文本内容
+ * @param data 原始响应数据
+ * @returns 文本内容
+ */
 function extractArkText(data: unknown): string {
     const obj = asRecord(data)
     if (!obj) return ''

@@ -1,7 +1,21 @@
 import { toFetchableUrl } from '@/lib/storage/utils'
 
 export const BAILIAN_TTS_MODEL_ID = 'qwen3-tts-vd-2026-01-26'
-const BAILIAN_TTS_ENDPOINT = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation'
+
+// 网关基础 URL 处理函数
+function resolveGatewayBaseUrl(baseUrl?: string): string | undefined {
+  if (!baseUrl) return undefined
+  return baseUrl.replace(/\/v1\/?$/, '')
+}
+
+function resolveTtsEndpoint(baseUrl?: string): string {
+  const gatewayBaseUrl = resolveGatewayBaseUrl(baseUrl)
+  if (gatewayBaseUrl) {
+    return `${gatewayBaseUrl}/api/v1/services/aigc/multimodal-generation/generation`
+  }
+  return 'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation'
+}
+
 const BAILIAN_TTS_MAX_CHARS = 600
 
 export interface BailianTTSInput {
@@ -263,8 +277,10 @@ async function synthesizeSegment(params: {
   languageType: string
   modelId: string
   apiKey: string
+  baseUrl?: string
 }): Promise<BailianTTSSegmentResult> {
-  const response = await fetch(BAILIAN_TTS_ENDPOINT, {
+  const ttsEndpoint = resolveTtsEndpoint(params.baseUrl)
+  const response = await fetch(ttsEndpoint, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${params.apiKey}`,
@@ -307,6 +323,7 @@ async function synthesizeSegment(params: {
 export async function synthesizeWithBailianTTS(
   input: BailianTTSInput,
   apiKey: string,
+  baseUrl?: string,
 ): Promise<BailianTTSResult> {
   const text = readTrimmedString(input.text)
   const voiceId = readTrimmedString(input.voiceId)
@@ -341,6 +358,7 @@ export async function synthesizeWithBailianTTS(
         languageType,
         modelId,
         apiKey,
+        baseUrl,
       })
       buffers.push(result.audioBuffer)
       totalCharacters += result.characters

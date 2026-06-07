@@ -4,6 +4,7 @@ import React, { useState, useCallback, useMemo } from 'react'
 import { AppIcon } from '@/components/ui/icons'
 import type { AppIconName } from '@/components/ui/icons'
 import { ModelCapabilityDropdown } from '@/components/ui/config-modals/ModelCapabilityDropdown'
+import { SearchableSelect } from '@/components/ui/config-modals/SearchableSelect'
 import type { CapabilityValue, ModelCapabilities } from '@/lib/model-config-contract'
 
 // ---------- types ----------
@@ -211,25 +212,18 @@ function SmartSelector({
         )
     }
 
-    // Native select for audio / lipsync / voicedesign
+    // Searchable select for audio / lipsync / voicedesign
     return (
-        <div className="relative">
-            <select
-                value={normalizedKey}
-                onChange={(event) => props.updateDefaultModel(field, event.target.value)}
-                className="glass-input-base w-full appearance-none px-3 py-2 text-sm rounded-xl outline-none transition-all text-[var(--glass-text-primary)]"
-            >
-                <option value="">{placeholder}</option>
-                {options.map((option, index) => (
-                    <option key={`${option.modelKey}-${index}`} value={option.modelKey}>
-                        {option.name} ({option.providerName || props.getProviderDisplayName(option.provider, locale)})
-                    </option>
-                ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[var(--glass-text-tertiary)]">
-                <AppIcon name="chevronDown" className="h-4 w-4" />
-            </div>
-        </div>
+        <SearchableSelect
+            options={options.map((option) => ({
+                value: option.modelKey,
+                label: `${option.name} (${option.providerName || props.getProviderDisplayName(option.provider, locale)})`,
+                group: option.providerName || props.getProviderDisplayName(option.provider, locale),
+            }))}
+            value={normalizedKey}
+            onChange={(val) => props.updateDefaultModel(field, val)}
+            placeholder={placeholder}
+        />
     )
 }
 
@@ -452,10 +446,10 @@ export function DefaultModelCards(allProps: DefaultModelCardsProps) {
                     </div>
                 </div>
                 <div className="glass-surface p-6 rounded-3xl border border-indigo-500/20 bg-indigo-500/[0.02] shadow-sm mb-8">
-                    <div className="flex items-start gap-2 mb-4 px-3 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400">
+                    {/* <div className="flex items-start gap-2 mb-4 px-3 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400">
                         <AppIcon name="alert" className="w-4 h-4 shrink-0 mt-0.5" />
                         <span className="text-xs leading-relaxed">{t('imageModelTip')}</span>
-                    </div>
+                    </div> */}
                     {/* Batch config header */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-indigo-500/10">
                         <div>

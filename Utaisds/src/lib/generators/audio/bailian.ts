@@ -11,7 +11,15 @@ import { getProviderConfig } from '@/lib/api-config'
 export class BailianTTSGenerator extends BaseAudioGenerator {
   protected async doGenerate(params: AudioGenerateParams): Promise<GenerateResult> {
     const { userId, text, voice = 'default', rate = 1.0 } = params
-    const { apiKey } = await getProviderConfig(userId, 'bailian')
+    // 通过网关调用
+    const gatewayConfig = await getProviderConfig(userId, 'gateway')
+    const apiKey = gatewayConfig.apiKey
+    const gatewayBaseUrl = gatewayConfig.baseUrl
+      ? gatewayConfig.baseUrl.replace(/\/v1\/?$/, '')
+      : undefined
+    const url = gatewayBaseUrl
+      ? `${gatewayBaseUrl}/api/v1/audio/tts`
+      : 'https://dashscope.aliyuncs.com/api/v1/audio/tts'
 
     const body = {
       text,
@@ -19,7 +27,7 @@ export class BailianTTSGenerator extends BaseAudioGenerator {
       rate,
     }
 
-    const response = await fetch('https://dashscope.aliyuncs.com/api/v1/audio/tts', {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
